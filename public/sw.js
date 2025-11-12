@@ -12,6 +12,13 @@ self.addEventListener('activate', function (event) {
 })
 
 self.addEventListener('fetch', function (event) {
-  // Basic fetch handler - you can add caching strategies here if needed
-  event.respondWith(fetch(event.request))
+  event.respondWith(
+    fetch(event.request).catch(function (error) {
+      console.error('Fetch failed:', error)
+      return new Response('Offline', {
+        status: 503,
+        statusText: 'Service Unavailable',
+      })
+    })
+  )
 })

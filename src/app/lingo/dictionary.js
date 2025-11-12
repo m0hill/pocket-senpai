@@ -1,0 +1,273 @@
+export default {
+  version: 0.1,
+  files: {
+    'page.tsx': {
+      entries: {
+        '3/body/4/argument/1': {
+          content: {
+            de: '<element:svg><element:path></element:path></element:svg> App installieren',
+            en: '<element:svg><element:path></element:path></element:svg> Install App',
+            es: '<element:svg><element:path></element:path></element:svg> Instalar aplicación',
+            fr: "<element:svg><element:path></element:path></element:svg> Installer l'application",
+            ja: '<element:svg><element:path></element:path></element:svg> アプリをインストール',
+            zh: '<element:svg><element:path></element:path></element:svg> 安装应用',
+          },
+          hash: '139837c26a002e0f790bfe05c30d8b05',
+        },
+        '3/body/4/argument/3': {
+          content: {
+            de: 'Zum Startbildschirm hinzufügen',
+            en: 'Add to Home Screen',
+            es: 'Añadir a la pantalla de inicio',
+            fr: "Ajouter à l'écran d'accueil",
+            ja: 'ホーム画面に追加',
+            zh: '添加到主屏幕',
+          },
+          hash: 'beef0150cbad3465f6f5acd29c45f3ad',
+        },
+        '3/body/4/argument/3/expression/right/1': {
+          content: {
+            de: 'Um diese App auf Ihrem iOS-Gerät zu installieren, tippen Sie auf die Teilen-Schaltfläche<element:span> ⎋ </element:span> und dann auf “Zum Startbildschirm hinzufügen”<element:span> ➕ </element:span> .',
+            en: 'To install this app on your iOS device, tap the share button<element:span> ⎋ </element:span> and then “Add to Home Screen”<element:span> ➕ </element:span> .',
+            es: 'Para instalar esta aplicación en tu dispositivo iOS, toca el botón de compartir<element:span> ⎋ </element:span> y luego “Añadir a pantalla de inicio”<element:span> ➕ </element:span> .',
+            fr: "Pour installer cette application sur votre appareil iOS, appuyez sur le bouton de partage<element:span> ⎋ </element:span> puis sur “Ajouter à l'écran d'accueil”<element:span> ➕ </element:span> .",
+            ja: 'このアプリをiOSデバイスにインストールするには、共有ボタン<element:span> ⎋ </element:span>をタップして、「ホーム画面に追加」<element:span> ➕ </element:span>をタップしてください。',
+            zh: '要在您的 iOS 设备上安装此应用，请点击分享按钮<element:span> ⎋ </element:span>，然后选择 “添加到主屏幕”<element:span> ➕ </element:span> 。',
+          },
+          hash: 'eea84cf7f6f8ab99018e414d848b121e',
+        },
+        '3/body/4/argument/3/expression/right/1/1-aria-label': {
+          content: {
+            de: 'Teilen-Symbol',
+            en: 'share icon',
+            es: 'icono de compartir',
+            fr: 'icône de partage',
+            ja: '共有アイコン',
+            zh: '分享图标',
+          },
+          hash: '0775a96d7a3be48873fa51e1d2cc5f56',
+        },
+        '3/body/4/argument/3/expression/right/1/3-aria-label': {
+          content: {
+            de: 'Plus-Symbol',
+            en: 'plus icon',
+            es: 'icono de más',
+            fr: 'icône plus',
+            ja: 'プラスアイコン',
+            zh: '加号图标',
+          },
+          hash: '557ad573c74d5d08b18c1da0b62f92c4',
+        },
+        '3/body/4/argument/5/expression/right': {
+          content: {
+            de: 'Um diese App auf Ihrem iOS-Gerät zu installieren, tippen Sie auf die Teilen-Schaltfläche<element:span> ⎋ </element:span> und dann “Zum Startbildschirm hinzufügen”<element:span> ➕ </element:span> .',
+            en: 'To install this app on your iOS device, tap the share button<element:span> ⎋ </element:span> and then “Add to Home Screen”<element:span> ➕ </element:span> .',
+            es: 'Para instalar esta aplicación en tu dispositivo iOS, toca el botón de compartir<element:span> ⎋ </element:span> y luego “Añadir a la pantalla de inicio”<element:span> ➕ </element:span> .',
+            fr: "Pour installer cette application sur votre appareil iOS, appuyez sur le bouton de partage<element:span> ⎋ </element:span> puis sur “Ajouter à l'écran d'accueil”<element:span> ➕ </element:span> .",
+            ja: 'このアプリをiOSデバイスにインストールするには、共有ボタン<element:span> ⎋ </element:span>をタップして、「ホーム画面に追加」<element:span> ➕ </element:span>をタップしてください。',
+            zh: '要在您的 iOS 设备上安装此应用，请点击分享按钮<element:span> ⎋ </element:span>，然后选择 “添加到主屏幕”<element:span> ➕ </element:span>。',
+          },
+          hash: '442f01cfb1f2d5f8d1acef3e835d55ed',
+        },
+        '3/body/4/argument/5/expression/right/1-aria-label': {
+          content: {
+            de: 'Teilen-Symbol',
+            en: 'share icon',
+            es: 'icono de compartir',
+            fr: 'icône de partage',
+            ja: '共有アイコン',
+            zh: '分享图标',
+          },
+          hash: '0775a96d7a3be48873fa51e1d2cc5f56',
+        },
+        '3/body/4/argument/5/expression/right/3-aria-label': {
+          content: {
+            de: 'Plus-Symbol',
+            en: 'plus icon',
+            es: 'icono de más',
+            fr: 'icône plus',
+            ja: 'プラスアイコン',
+            zh: '加号图标',
+          },
+          hash: '557ad573c74d5d08b18c1da0b62f92c4',
+        },
+        '4/declaration/body/0/argument/1/1-alt': {
+          content: {
+            de: 'Next.js-Logo',
+            en: 'Next.js logo',
+            es: 'Logo de Next.js',
+            fr: 'Logo Next.js',
+            ja: 'Next.jsロゴ',
+            zh: 'Next.js 标志',
+          },
+          hash: 'd466a5d83229413a6a5a6733490b8e92',
+        },
+        '4/declaration/body/0/argument/1/3/1': {
+          content: {
+            de: 'Beginnen Sie mit der Bearbeitung von <element:code>src/app/page.tsx</element:code> .',
+            en: 'Get started by editing <element:code>src/app/page.tsx</element:code> .',
+            es: 'Comienza editando <element:code>src/app/page.tsx</element:code> .',
+            fr: 'Commencez par modifier <element:code>src/app/page.tsx</element:code> .',
+            ja: '<element:code>src/app/page.tsx</element:code>を編集して始めましょう。',
+            zh: '通过编辑 <element:code>src/app/page.tsx</element:code> 开始。',
+          },
+          hash: 'c4bcde2bc2be20a29634c2c28959f4de',
+        },
+        '4/declaration/body/0/argument/1/3/3': {
+          content: {
+            de: 'Speichern Sie und sehen Sie Ihre Änderungen sofort.',
+            en: 'Save and see your changes instantly.',
+            es: 'Guarda y ve tus cambios al instante.',
+            fr: 'Enregistrez et voyez vos modifications instantanément.',
+            ja: '保存すると変更がすぐに反映されます。',
+            zh: '保存并立即查看您的更改。',
+          },
+          hash: '05b9ac8cb25927d2c69d4b98f9f97f83',
+        },
+        '4/declaration/body/0/argument/1/7/1': {
+          content: {
+            de: 'Lesen Sie unsere Dokumentation',
+            en: 'Read our docs',
+            es: 'Lee nuestra documentación',
+            fr: 'Lisez notre documentation',
+            ja: 'ドキュメントを読む',
+            zh: '阅读我们的文档',
+          },
+          hash: 'af8e3037208596e562f3c3c3ae780048',
+        },
+        '4/declaration/body/0/argument/3/1': {
+          content: {
+            de: '<element:Image></element:Image> Lernen',
+            en: '<element:Image></element:Image> Learn',
+            es: '<element:Image></element:Image> Aprender',
+            fr: '<element:Image></element:Image> Apprendre',
+            ja: '<element:Image></element:Image> 学ぶ',
+            zh: '<element:Image></element:Image> 学习',
+          },
+          hash: '8bde38d122e989e5dd6e16c9b18bc360',
+        },
+        '4/declaration/body/0/argument/3/1-alt': {
+          content: {
+            de: 'Next.js-Logo',
+            en: 'Next.js logo',
+            es: 'Logo de Next.js',
+            fr: 'Logo Next.js',
+            ja: 'Next.jsロゴ',
+            zh: 'Next.js 标志',
+          },
+          hash: 'd466a5d83229413a6a5a6733490b8e92',
+        },
+        '4/declaration/body/0/argument/3/1/1-alt': {
+          content: {
+            de: 'Datei-Symbol',
+            en: 'File icon',
+            es: 'Icono de archivo',
+            fr: 'Icône de fichier',
+            ja: 'ファイルアイコン',
+            zh: '文件图标',
+          },
+          hash: 'c9fdbf0f3d05590518cd8cfe360a1435',
+        },
+        '4/declaration/body/0/argument/3/3': {
+          content: {
+            de: '<element:Image></element:Image> Zu nextjs.org gehen →',
+            en: '<element:Image></element:Image> Go to nextjs.org →',
+            es: '<element:Image></element:Image> Ir a nextjs.org →',
+            fr: '<element:Image></element:Image> Aller sur nextjs.org →',
+            ja: '<element:Image></element:Image> nextjs.orgに移動 →',
+            zh: '<element:Image></element:Image> 前往 nextjs.org →',
+          },
+          hash: 'abf4b07698674f59567e7e4108e8f7e7',
+        },
+        '4/declaration/body/0/argument/3/3/1': {
+          content: {
+            de: 'Beginnen Sie mit der Bearbeitung von <element:code>src/app/page.tsx</element:code> .',
+            en: 'Get started by editing <element:code>src/app/page.tsx</element:code> .',
+            es: 'Comienza editando <element:code>src/app/page.tsx</element:code> .',
+            fr: 'Commencez par modifier <element:code>src/app/page.tsx</element:code> .',
+            ja: '<element:code>src/app/page.tsx</element:code>を編集して始めましょう。',
+            zh: '通过编辑 <element:code>src/app/page.tsx</element:code> 开始。',
+          },
+          hash: 'c4bcde2bc2be20a29634c2c28959f4de',
+        },
+        '4/declaration/body/0/argument/3/3/1-alt': {
+          content: {
+            de: 'Globus-Symbol',
+            en: 'Globe icon',
+            es: 'Icono de globo',
+            fr: 'Icône de globe',
+            ja: 'グローブアイコン',
+            zh: '地球图标',
+          },
+          hash: '4467320f63442e7e0729ad6d55b4a8b1',
+        },
+        '4/declaration/body/0/argument/3/3/3': {
+          content: {
+            de: 'Speichern Sie und sehen Sie Ihre Änderungen sofort.',
+            en: 'Save and see your changes instantly.',
+            es: 'Guarda y ve tus cambios al instante.',
+            fr: 'Enregistrez et voyez vos modifications instantanément.',
+            ja: '保存すると変更がすぐに反映されます。',
+            zh: '保存并立即查看您的更改。',
+          },
+          hash: '05b9ac8cb25927d2c69d4b98f9f97f83',
+        },
+        '4/declaration/body/0/argument/3/7/1': {
+          content: {
+            de: 'Lesen Sie unsere Dokumentation',
+            en: 'Read our docs',
+            es: 'Lee nuestra documentación',
+            fr: 'Lisez notre documentation',
+            ja: 'ドキュメントを読む',
+            zh: '阅读我们的文档',
+          },
+          hash: 'af8e3037208596e562f3c3c3ae780048',
+        },
+        '4/declaration/body/0/argument/5/1': {
+          content: {
+            de: '<element:Image></element:Image> Lernen',
+            en: '<element:Image></element:Image> Learn',
+            es: '<element:Image></element:Image> Aprender',
+            fr: '<element:Image></element:Image> Apprendre',
+            ja: '<element:Image></element:Image> 学ぶ',
+            zh: '<element:Image></element:Image> 学习',
+          },
+          hash: '8bde38d122e989e5dd6e16c9b18bc360',
+        },
+        '4/declaration/body/0/argument/5/1/1-alt': {
+          content: {
+            de: 'Datei-Symbol',
+            en: 'File icon',
+            es: 'Icono de archivo',
+            fr: 'Icône de fichier',
+            ja: 'ファイルアイコン',
+            zh: '文件图标',
+          },
+          hash: 'c9fdbf0f3d05590518cd8cfe360a1435',
+        },
+        '4/declaration/body/0/argument/5/3': {
+          content: {
+            de: '<element:Image></element:Image> Zu nextjs.org gehen →',
+            en: '<element:Image></element:Image> Go to nextjs.org →',
+            es: '<element:Image></element:Image> Ir a nextjs.org →',
+            fr: '<element:Image></element:Image> Aller sur nextjs.org →',
+            ja: '<element:Image></element:Image> nextjs.orgに移動 →',
+            zh: '<element:Image></element:Image> 前往 nextjs.org →',
+          },
+          hash: 'abf4b07698674f59567e7e4108e8f7e7',
+        },
+        '4/declaration/body/0/argument/5/3/1-alt': {
+          content: {
+            de: 'Globus-Symbol',
+            en: 'Globe icon',
+            es: 'Icono de globo',
+            fr: 'Icône de globe',
+            ja: 'グローブアイコン',
+            zh: '地球图标',
+          },
+          hash: '4467320f63442e7e0729ad6d55b4a8b1',
+        },
+      },
+    },
+  },
+}
