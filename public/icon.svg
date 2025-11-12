@@ -1,0 +1,21 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="512" height="512" rx="115" fill="#000000"/>
+  
+  <!-- Pocket shape -->
+  <path d="M128 140C128 118.909 145.909 101 167 101H345C366.091 101 384 118.909 384 140V256C384 338.843 317.843 405 235 405H277C194.157 405 128 338.843 128 256V140Z" fill="#FFFFFF"/>
+  
+  <!-- Senpai face elements -->
+  <!-- Left eye -->
+  <circle cx="210" cy="220" r="18" fill="#000000"/>
+  
+  <!-- Right eye -->
+  <circle cx="302" cy="220" r="18" fill="#000000"/>
+  
+  <!-- Smile/mouth -->
+  <path d="M196 280C196 280 220 304 256 304C292 304 316 280 316 280" stroke="#000000" stroke-width="12" stroke-linecap="round"/>
+  
+  <!-- Blush marks -->
+  <ellipse cx="160" cy="240" rx="20" ry="12" fill="#FF6B9D" opacity="0.4"/>
+  <ellipse cx="352" cy="240" rx="20" ry="12" fill="#FF6B9D" opacity="0.4"/>
+</svg>
