@@ -1,3 +1,6 @@
+#Youtube-demo
+https://www.youtube.com/watch?v=r4B04h9fQpo&feature=youtu.be
+
 # Pocket Senpai
 
 Your expert senior colleague in your pocket. A multilingual AI assistant that helps workers understand machinery, procedures, and safety protocols by breaking down language barriers.
@@ -36,7 +39,7 @@ Your expert senior colleague in your pocket. A multilingual AI assistant that he
 ## 📦 Installation
 
 ### Prerequisites
-- Node.js 18+ 
+- Node.js 18+
 - npm, yarn, or pnpm
 
 ### Setup
@@ -144,7 +147,7 @@ npm run preview
 
 #### Moondream Vision
 - **Purpose**: Image analysis and object detection
-- **Features**: 
+- **Features**:
   - Object detection with bounding boxes
   - Point marking for precise locations
   - Natural language image descriptions
