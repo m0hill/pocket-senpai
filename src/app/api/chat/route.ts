@@ -1,7 +1,6 @@
 import { anthropic } from '@ai-sdk/anthropic'
 import { supermemoryTools } from '@supermemory/tools/ai-sdk'
 import { convertToModelMessages, stepCountIs, streamText } from 'ai'
-import { moondreamTools } from '@/moondream-tools'
 
 export async function POST(req: Request) {
   try {
@@ -34,7 +33,7 @@ You have access to a specialized tool:
       messages: modelMessages,
       tools: {
         ...supermemoryTools(process.env.SUPERMEMORY_API_KEY!, {
-          containerTags: ['pocket-senpai'],
+          containerTags: ['imported'],
         }),
       },
       // Enable multi-step calls: allow up to 5 steps if tools are called

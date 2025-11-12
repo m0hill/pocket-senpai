@@ -1,5 +1,19 @@
 'use client'
 
+import {
+  CheckCircle2,
+  ChevronLeft,
+  ChevronRight,
+  Clock,
+  FileText,
+  Home,
+  Link as LinkIcon,
+  Moon,
+  RefreshCw,
+  Sun,
+  Upload,
+} from 'lucide-react'
+import { useTheme } from 'next-themes'
 import Link from 'next/link'
 import { useCallback, useEffect, useState } from 'react'
 
@@ -28,7 +42,7 @@ interface MemoriesResponse {
 export default function MemoriesPage() {
   const [uploadType, setUploadType] = useState<UploadType>('text')
   const [content, setContent] = useState('')
-  const [containerTag, setContainerTag] = useState('pocket-senpai')
+  const [containerTag, setContainerTag] = useState('imported')
   const [file, setFile] = useState<File | null>(null)
   const [loading, setLoading] = useState(false)
   const [result, setResult] = useState<{ id: string; status: string; filename?: string } | null>(
@@ -36,14 +50,19 @@ export default function MemoriesPage() {
   )
   const [error, setError] = useState<string | null>(null)
 
-  // List memories state
   const [memories, setMemories] = useState<Memory[]>([])
   const [loadingMemories, setLoadingMemories] = useState(true)
   const [currentPage, setCurrentPage] = useState(1)
   const [totalPages, setTotalPages] = useState(1)
   const [totalItems, setTotalItems] = useState(0)
 
-  // Fetch memories
+  const { theme, setTheme } = useTheme()
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
   const fetchMemories = useCallback(
     async (page = 1) => {
       setLoadingMemories(true)
@@ -80,7 +99,6 @@ export default function MemoriesPage() {
     [containerTag]
   )
 
-  // Load memories on mount and when container tag changes
   useEffect(() => {
     fetchMemories(1)
   }, [containerTag, fetchMemories])
@@ -113,7 +131,6 @@ export default function MemoriesPage() {
       const data = (await response.json()) as { id: string; status: string }
       setResult(data)
       setContent('')
-      // Refresh memories list
       fetchMemories(currentPage)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred')
@@ -150,7 +167,6 @@ export default function MemoriesPage() {
       const data = (await response.json()) as { id: string; status: string }
       setResult({ ...data, filename })
       setFile(null)
-      // Refresh memories list
       fetchMemories(currentPage)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred')
@@ -168,331 +184,366 @@ export default function MemoriesPage() {
   }
 
   return (
-    <div className="min-h-screen p-8 max-w-4xl mx-auto">
-      <div className="mb-8">
-        <div className="flex items-center justify-between mb-4">
-          <div>
-            <h1 className="text-4xl font-bold mb-2">Add to Supermemory</h1>
-            <p className="text-gray-600 dark:text-gray-400">
-              Upload content to your knowledge graph
-            </p>
-          </div>
-          <div className="flex gap-2">
-            <a
-              href="/chat"
-              className="px-4 py-2 text-sm rounded-lg bg-purple-500 text-white hover:bg-purple-600 transition-colors"
-            >
-              Chat
-            </a>
-            <Link
-              href="/"
-              className="px-4 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
-            >
-              Home
-            </Link>
-          </div>
-        </div>
-      </div>
-
-      <div className="mb-6 flex gap-2">
-        <button
-          onClick={() => setUploadType('text')}
-          className={`px-4 py-2 rounded-lg transition-colors ${
-            uploadType === 'text'
-              ? 'bg-purple-500 text-white'
-              : 'bg-gray-200 dark:bg-gray-800 text-gray-700 dark:text-gray-300'
-          }`}
-        >
-          Text
-        </button>
-        <button
-          onClick={() => setUploadType('file')}
-          className={`px-4 py-2 rounded-lg transition-colors ${
-            uploadType === 'file'
-              ? 'bg-purple-500 text-white'
-              : 'bg-gray-200 dark:bg-gray-800 text-gray-700 dark:text-gray-300'
-          }`}
-        >
-          File
-        </button>
-        <button
-          onClick={() => setUploadType('url')}
-          className={`px-4 py-2 rounded-lg transition-colors ${
-            uploadType === 'url'
-              ? 'bg-purple-500 text-white'
-              : 'bg-gray-200 dark:bg-gray-800 text-gray-700 dark:text-gray-300'
-          }`}
-        >
-          URL
-        </button>
-      </div>
-
-      <form onSubmit={handleSubmit} className="space-y-6">
-        {uploadType === 'text' && (
-          <div>
-            <label htmlFor="content" className="block text-sm font-medium mb-2">
-              Content
-            </label>
-            <textarea
-              id="content"
-              value={content}
-              onChange={e => setContent(e.target.value)}
-              rows={8}
-              className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-purple-500"
-              placeholder="Enter your content here..."
-              required
-            />
-          </div>
-        )}
-
-        {uploadType === 'file' && (
-          <div>
-            <label htmlFor="file" className="block text-sm font-medium mb-2">
-              File
-            </label>
-            <input
-              id="file"
-              type="file"
-              onChange={e => setFile(e.target.files?.[0] || null)}
-              className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-purple-500"
-              accept=".pdf,.jpg,.jpeg,.png,.gif,.webp,.txt,.md,.csv,.doc,.docx"
-              required
-            />
-            <p className="text-xs text-gray-500 mt-1">
-              Supported: PDF, Images (JPG, PNG, WebP), Office docs (DOCX), Text files (TXT, MD, CSV)
-            </p>
-          </div>
-        )}
-
-        {uploadType === 'url' && (
-          <div>
-            <label htmlFor="url" className="block text-sm font-medium mb-2">
-              URL
-            </label>
-            <input
-              id="url"
-              type="url"
-              value={content}
-              onChange={e => setContent(e.target.value)}
-              className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-purple-500"
-              placeholder="https://example.com"
-              required
-            />
-            <p className="text-xs text-gray-500 mt-1">
-              Supports web pages, Twitter/X, YouTube, and more
-            </p>
-          </div>
-        )}
-
-        <div>
-          <label htmlFor="containerTag" className="block text-sm font-medium mb-2">
-            Container Tag
-          </label>
-          <input
-            id="containerTag"
-            type="text"
-            value={containerTag}
-            onChange={e => setContainerTag(e.target.value)}
-            className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-purple-500"
-            placeholder="pocket-senpai"
-          />
-          <p className="text-xs text-gray-500 mt-1">Group related content together</p>
-        </div>
-
-        <button
-          type="submit"
-          disabled={
-            loading || (uploadType === 'file' && !file) || (uploadType !== 'file' && !content)
-          }
-          className="w-full px-6 py-3 bg-purple-500 text-white rounded-lg font-medium hover:bg-purple-600 focus:outline-none focus:ring-2 focus:ring-purple-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-        >
-          {loading ? 'Uploading...' : 'Upload Memory'}
-        </button>
-      </form>
-
-      {result && (
-        <div className="mt-6 p-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg">
-          <h3 className="font-semibold text-green-800 dark:text-green-200 mb-2">
-            ✓ Successfully Uploaded!
-          </h3>
-          {result.filename && (
-            <p className="text-sm text-green-700 dark:text-green-300 mb-1">
-              File: {result.filename}
-            </p>
-          )}
-          <p className="text-sm text-green-700 dark:text-green-300">
-            Status: {result.status} - Your memory is being processed
-          </p>
-          <p className="text-xs text-green-600 dark:text-green-400 mt-2">ID: {result.id}</p>
-        </div>
-      )}
-
-      {error && (
-        <div className="mt-6 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
-          <h3 className="font-semibold text-red-800 dark:text-red-200 mb-2">Error</h3>
-          <p className="text-sm text-red-700 dark:text-red-300">{error}</p>
-        </div>
-      )}
-
-      {/* Memories List */}
-      <div className="mt-12">
-        <div className="flex items-center justify-between mb-6">
-          <div>
-            <h2 className="text-2xl font-bold">Your Memories</h2>
-            <p className="text-sm text-gray-600 dark:text-gray-400">
-              {totalItems} {totalItems === 1 ? 'memory' : 'memories'} uploaded
-            </p>
-          </div>
-          <button
-            onClick={() => fetchMemories(currentPage)}
-            disabled={loadingMemories}
-            className="px-4 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors disabled:opacity-50"
-          >
-            {loadingMemories ? 'Loading...' : 'Refresh'}
-          </button>
-        </div>
-
-        {loadingMemories && memories.length === 0 ? (
-          <div className="text-center py-12">
-            <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-purple-500"></div>
-            <p className="mt-4 text-gray-600 dark:text-gray-400">Loading memories...</p>
-          </div>
-        ) : memories.length === 0 ? (
-          <div className="text-center py-12 bg-gray-50 dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-800">
-            <svg
-              className="mx-auto h-12 w-12 text-gray-400"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"
-              />
-            </svg>
-            <h3 className="mt-4 text-lg font-medium text-gray-900 dark:text-gray-100">
-              No memories yet
-            </h3>
-            <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
-              Upload your first memory using the form above
-            </p>
-          </div>
-        ) : (
-          <>
-            <div className="space-y-4">
-              {memories.map(memory => (
-                <div
-                  key={memory.id}
-                  className="p-4 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 hover:border-purple-300 dark:hover:border-purple-700 transition-colors"
+    <div className="min-h-screen font-mono text-xs sm:text-sm">
+      {/* Header */}
+      <div className="border-b border-border bg-background sticky top-0 z-10">
+        <div className="container mx-auto px-4 py-3 sm:py-4">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-0">
+            <div>
+              <div className="flex items-center gap-2 mb-1">
+                <Upload className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
+                <span className="font-bold text-base sm:text-lg">DOCUMENT_MANAGER.SYS</span>
+              </div>
+              <p className="text-xs text-muted-foreground">
+                Add work manuals, procedures, and documents for Pocket Senpai to reference
+              </p>
+            </div>
+            <div className="flex items-center gap-2 w-full sm:w-auto justify-end">
+              <Link
+                href="/chat"
+                className="flex items-center gap-1 px-3 py-2 bg-primary text-primary-foreground hover:opacity-90 transition-opacity text-xs"
+              >
+                <span className="hidden sm:inline">[CHAT]</span>
+                <span className="sm:hidden">[C]</span>
+              </Link>
+              <Link
+                href="/"
+                className="flex items-center gap-1 px-3 py-2 border border-border hover:bg-muted transition-colors text-xs"
+              >
+                <Home className="w-3 h-3 sm:w-4 sm:h-4" />
+                <span className="hidden sm:inline">[HOME]</span>
+              </Link>
+              {mounted && (
+                <button
+                  onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+                  className="flex items-center gap-1 px-3 py-2 border border-border hover:bg-muted transition-colors"
                 >
-                  <div className="flex items-start justify-between mb-2">
-                    <div className="flex-1">
-                      <h3 className="font-semibold text-lg mb-1">
-                        {memory.title || 'Untitled Memory'}
-                      </h3>
-                      <div className="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400">
-                        <span
-                          className={`px-2 py-0.5 rounded ${
-                            memory.status === 'done'
-                              ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300'
-                              : memory.status === 'failed'
-                                ? 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300'
-                                : 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-300'
-                          }`}
-                        >
-                          {memory.status}
-                        </span>
-                        <span className="px-2 py-0.5 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded">
-                          {memory.type}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-
-                  {memory.summary && (
-                    <p className="text-sm text-gray-600 dark:text-gray-400 mb-3 line-clamp-2">
-                      {memory.summary}
-                    </p>
+                  {theme === 'dark' ? (
+                    <Sun className="w-3 h-3 sm:w-4 sm:h-4" />
+                  ) : (
+                    <Moon className="w-3 h-3 sm:w-4 sm:h-4" />
                   )}
+                  <span className="hidden sm:inline">
+                    {theme === 'dark' ? '[LIGHT]' : '[DARK]'}
+                  </span>
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
 
-                  <div className="flex items-center gap-4 text-xs text-gray-500 dark:text-gray-400">
-                    <div className="flex items-center gap-1">
-                      <svg
-                        className="w-4 h-4"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M12 6v6m0 0v6m0-6h6m-6 0H6"
-                        />
-                      </svg>
-                      <span>Created: {new Date(memory.createdAt).toLocaleDateString()}</span>
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <svg
-                        className="w-4 h-4"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
-                        />
-                      </svg>
-                      <span>Updated: {new Date(memory.updatedAt).toLocaleDateString()}</span>
-                    </div>
-                  </div>
-                </div>
-              ))}
+      <div className="container mx-auto px-4 py-6 sm:py-8 max-w-6xl">
+        {/* Upload Section */}
+        <div className="border border-border mb-6 sm:mb-8">
+          <div className="bg-muted p-2 sm:p-3 border-b border-border">
+            <span className="font-bold text-sm">UPLOAD_NEW_DOCUMENT.FORM</span>
+          </div>
+          <div className="p-4 sm:p-6">
+            {/* Upload Type Tabs */}
+            <div className="flex gap-2 mb-4 sm:mb-6">
+              <button
+                onClick={() => setUploadType('text')}
+                className={`px-3 sm:px-4 py-2 border transition-colors text-xs sm:text-sm ${
+                  uploadType === 'text'
+                    ? 'bg-primary text-primary-foreground border-primary'
+                    : 'border-border hover:bg-muted'
+                }`}
+              >
+                <FileText className="w-3 h-3 sm:w-4 sm:h-4 inline mr-1" />
+                [TEXT]
+              </button>
+              <button
+                onClick={() => setUploadType('file')}
+                className={`px-3 sm:px-4 py-2 border transition-colors text-xs sm:text-sm ${
+                  uploadType === 'file'
+                    ? 'bg-primary text-primary-foreground border-primary'
+                    : 'border-border hover:bg-muted'
+                }`}
+              >
+                <Upload className="w-3 h-3 sm:w-4 sm:h-4 inline mr-1" />
+                [FILE]
+              </button>
+              <button
+                onClick={() => setUploadType('url')}
+                className={`px-3 sm:px-4 py-2 border transition-colors text-xs sm:text-sm ${
+                  uploadType === 'url'
+                    ? 'bg-primary text-primary-foreground border-primary'
+                    : 'border-border hover:bg-muted'
+                }`}
+              >
+                <LinkIcon className="w-3 h-3 sm:w-4 sm:h-4 inline mr-1" />
+                [URL]
+              </button>
             </div>
 
-            {/* Pagination */}
-            {totalPages > 1 && (
-              <div className="mt-6 flex items-center justify-center gap-2">
-                <button
-                  onClick={() => fetchMemories(currentPage - 1)}
-                  disabled={currentPage === 1 || loadingMemories}
-                  className="px-4 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  Previous
-                </button>
-                <span className="text-sm text-gray-600 dark:text-gray-400">
-                  Page {currentPage} of {totalPages}
-                </span>
-                <button
-                  onClick={() => fetchMemories(currentPage + 1)}
-                  disabled={currentPage === totalPages || loadingMemories}
-                  className="px-4 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  Next
-                </button>
+            <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
+              {uploadType === 'text' && (
+                <div>
+                  <label htmlFor="content" className="block text-xs sm:text-sm font-medium mb-2">
+                    {'>'} CONTENT:
+                  </label>
+                  <textarea
+                    id="content"
+                    value={content}
+                    onChange={e => setContent(e.target.value)}
+                    rows={8}
+                    className="w-full px-3 sm:px-4 py-2 border border-border bg-background focus:outline-none focus:ring-1 focus:ring-primary text-xs sm:text-sm font-mono"
+                    placeholder="Enter your content here..."
+                    required
+                  />
+                </div>
+              )}
+
+              {uploadType === 'file' && (
+                <div>
+                  <label htmlFor="file" className="block text-xs sm:text-sm font-medium mb-2">
+                    {'>'} FILE:
+                  </label>
+                  <input
+                    id="file"
+                    type="file"
+                    onChange={e => setFile(e.target.files?.[0] || null)}
+                    className="w-full px-3 sm:px-4 py-2 border border-border bg-background focus:outline-none focus:ring-1 focus:ring-primary text-xs sm:text-sm"
+                    accept=".pdf,.jpg,.jpeg,.png,.gif,.webp,.txt,.md,.csv,.doc,.docx"
+                    required
+                  />
+                  <p className="text-xs text-muted-foreground mt-2">
+                    Supported: PDF, Images, Office docs, Text files
+                  </p>
+                </div>
+              )}
+
+              {uploadType === 'url' && (
+                <div>
+                  <label htmlFor="url" className="block text-xs sm:text-sm font-medium mb-2">
+                    {'>'} URL:
+                  </label>
+                  <input
+                    id="url"
+                    type="url"
+                    value={content}
+                    onChange={e => setContent(e.target.value)}
+                    className="w-full px-3 sm:px-4 py-2 border border-border bg-background focus:outline-none focus:ring-1 focus:ring-primary text-xs sm:text-sm font-mono"
+                    placeholder="https://example.com"
+                    required
+                  />
+                  <p className="text-xs text-muted-foreground mt-2">
+                    Supports web pages, Twitter/X, YouTube, and more
+                  </p>
+                </div>
+              )}
+
+              <div>
+                <label htmlFor="containerTag" className="block text-xs sm:text-sm font-medium mb-2">
+                  {'>'} CONTAINER_TAG:
+                </label>
+                <input
+                  id="containerTag"
+                  type="text"
+                  value={containerTag}
+                  onChange={e => setContainerTag(e.target.value)}
+                  className="w-full px-3 sm:px-4 py-2 border border-border bg-background focus:outline-none focus:ring-1 focus:ring-primary text-xs sm:text-sm font-mono"
+                  placeholder="pocket-senpai"
+                />
+                <p className="text-xs text-muted-foreground mt-2">Group related content together</p>
+              </div>
+
+              <button
+                type="submit"
+                disabled={
+                  loading || (uploadType === 'file' && !file) || (uploadType !== 'file' && !content)
+                }
+                className="w-full px-4 sm:px-6 py-3 bg-primary text-primary-foreground font-medium hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-opacity flex items-center justify-center gap-2"
+              >
+                {loading ? (
+                  <>
+                    <RefreshCw className="w-4 h-4 animate-spin" />
+                    <span className="text-sm">[UPLOADING...]</span>
+                  </>
+                ) : (
+                  <>
+                    <Upload className="w-4 h-4" />
+                    <span className="text-sm">[UPLOAD_DOCUMENT]</span>
+                  </>
+                )}
+              </button>
+            </form>
+
+            {result && (
+              <div className="mt-4 p-3 sm:p-4 border border-green-500 bg-green-500/10">
+                <div className="flex items-center gap-2 mb-2">
+                  <CheckCircle2 className="w-4 h-4 text-green-500" />
+                  <h3 className="font-bold text-sm text-green-500">UPLOAD_SUCCESS</h3>
+                </div>
+                {result.filename && (
+                  <p className="text-xs mb-1">
+                    {'>'} File: {result.filename}
+                  </p>
+                )}
+                <p className="text-xs mb-1">
+                  {'>'} Status: {result.status.toUpperCase()}
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  {'>'} ID: {result.id}
+                </p>
               </div>
             )}
-          </>
-        )}
-      </div>
 
-      <div className="mt-12 p-6 bg-gray-50 dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-800">
-        <h2 className="text-xl font-semibold mb-4">About Supermemory</h2>
-        <div className="space-y-2 text-sm text-gray-600 dark:text-gray-400">
-          <p>
-            <strong>Documents:</strong> Raw content you upload (PDFs, URLs, text)
-          </p>
-          <p>
-            <strong>Memories:</strong> Searchable chunks created automatically with relationships
-          </p>
-          <p>
-            <strong>Container Tags:</strong> Group related content for better context
-          </p>
+            {error && (
+              <div className="mt-4 p-3 sm:p-4 border border-destructive bg-destructive/10">
+                <h3 className="font-bold text-sm text-destructive mb-2">ERROR</h3>
+                <p className="text-xs text-destructive">
+                  {'>'} {error}
+                </p>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Memories List */}
+        <div className="border border-border">
+          <div className="bg-muted p-2 sm:p-3 border-b border-border">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 sm:gap-0">
+              <div>
+                <span className="font-bold text-sm">UPLOADED_DOCUMENTS.DB</span>
+                <p className="text-xs text-muted-foreground mt-1">
+                  {'>'} {totalItems} {totalItems === 1 ? 'document' : 'documents'} available
+                </p>
+              </div>
+              <button
+                onClick={() => fetchMemories(currentPage)}
+                disabled={loadingMemories}
+                className="flex items-center gap-2 px-3 py-1.5 border border-border hover:bg-background transition-colors disabled:opacity-50 text-xs self-end sm:self-auto"
+              >
+                <RefreshCw className={`w-3 h-3 ${loadingMemories ? 'animate-spin' : ''}`} />
+                <span className="hidden sm:inline">[REFRESH]</span>
+              </button>
+            </div>
+          </div>
+
+          <div className="p-4 sm:p-6">
+            {loadingMemories && memories.length === 0 ? (
+              <div className="text-center py-8 sm:py-12">
+                <RefreshCw className="w-6 h-6 sm:w-8 sm:h-8 animate-spin mx-auto mb-4 text-primary" />
+                <p className="text-muted-foreground text-sm">LOADING_MEMORIES...</p>
+              </div>
+            ) : memories.length === 0 ? (
+              <div className="text-center py-8 sm:py-12 border border-border">
+                <FileText className="w-8 h-8 sm:w-12 sm:h-12 mx-auto mb-4 text-muted-foreground" />
+                <h3 className="font-bold mb-2 text-sm sm:text-base">NO_DOCUMENTS_FOUND</h3>
+                <p className="text-xs text-muted-foreground">
+                  Upload your first manual or document using the form above
+                </p>
+              </div>
+            ) : (
+              <>
+                <div className="space-y-3 sm:space-y-4">
+                  {memories.map(memory => (
+                    <div
+                      key={memory.id}
+                      className="border border-border hover:border-primary/50 transition-colors"
+                    >
+                      <div className="p-3 sm:p-4">
+                        <div className="flex items-start justify-between mb-2">
+                          <h3 className="font-bold text-sm sm:text-base flex-1">
+                            {'>'} {memory.title || 'UNTITLED_MEMORY'}
+                          </h3>
+                          <div className="flex items-center gap-2 ml-4">
+                            <span
+                              className={`px-2 py-0.5 text-xs border ${
+                                memory.status === 'done'
+                                  ? 'border-green-500 text-green-500 bg-green-500/10'
+                                  : memory.status === 'failed'
+                                    ? 'border-destructive text-destructive bg-destructive/10'
+                                    : 'border-yellow-500 text-yellow-500 bg-yellow-500/10'
+                              }`}
+                            >
+                              {memory.status.toUpperCase()}
+                            </span>
+                            <span className="px-2 py-0.5 text-xs border border-primary text-primary bg-primary/10">
+                              {memory.type.toUpperCase()}
+                            </span>
+                          </div>
+                        </div>
+
+                        {memory.summary && (
+                          <p className="text-xs sm:text-sm text-muted-foreground mb-3 line-clamp-2">
+                            {memory.summary}
+                          </p>
+                        )}
+
+                        <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-xs text-muted-foreground">
+                          <div className="flex items-center gap-1">
+                            <Clock className="w-3 h-3" />
+                            <span>Created: {new Date(memory.createdAt).toLocaleDateString()}</span>
+                          </div>
+                          <div className="flex items-center gap-1">
+                            <RefreshCw className="w-3 h-3" />
+                            <span>Updated: {new Date(memory.updatedAt).toLocaleDateString()}</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Pagination */}
+                {totalPages > 1 && (
+                  <div className="mt-6 flex items-center justify-center gap-2">
+                    <button
+                      onClick={() => fetchMemories(currentPage - 1)}
+                      disabled={currentPage === 1 || loadingMemories}
+                      className="flex items-center gap-1 px-3 py-2 border border-border hover:bg-muted transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-xs"
+                    >
+                      <ChevronLeft className="w-3 h-3" />
+                      <span className="hidden sm:inline">[PREV]</span>
+                    </button>
+                    <span className="text-xs text-muted-foreground px-3">
+                      PAGE {currentPage}/{totalPages}
+                    </span>
+                    <button
+                      onClick={() => fetchMemories(currentPage + 1)}
+                      disabled={currentPage === totalPages || loadingMemories}
+                      className="flex items-center gap-1 px-3 py-2 border border-border hover:bg-muted transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-xs"
+                    >
+                      <span className="hidden sm:inline">[NEXT]</span>
+                      <ChevronRight className="w-3 h-3" />
+                    </button>
+                  </div>
+                )}
+              </>
+            )}
+          </div>
+        </div>
+
+        {/* Info Section */}
+        <div className="mt-6 sm:mt-8 border border-border">
+          <div className="bg-muted p-2 sm:p-3 border-b border-border">
+            <span className="font-bold text-sm">INFO.TXT</span>
+          </div>
+          <div className="p-4 sm:p-6">
+            <div className="space-y-2 text-xs sm:text-sm">
+              <p>
+                <span className="text-primary font-bold">{'>'} MANUALS & GUIDES:</span>{' '}
+                <span className="text-muted-foreground">
+                  Upload machinery manuals, safety procedures, work instructions
+                </span>
+              </p>
+              <p>
+                <span className="text-primary font-bold">{'>'} SMART_PROCESSING:</span>{' '}
+                <span className="text-muted-foreground">
+                  Documents become searchable and referenceable in chat
+                </span>
+              </p>
+              <p>
+                <span className="text-primary font-bold">{'>'} MULTI_LANGUAGE:</span>{' '}
+                <span className="text-muted-foreground">
+                  I can read Japanese documents and answer in your language
+                </span>
+              </p>
+            </div>
+          </div>
         </div>
       </div>
     </div>

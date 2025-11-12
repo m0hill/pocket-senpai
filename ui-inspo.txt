@@ -1355,7 +1355,7 @@ export { Button, buttonVariants }
 </file>
 
 <userInstructions>
-Use this as inspirationa and descign ui accordign to my requirements.
+Use this as inspirationa and change the deisgn accoringly. have proper light and dark mode. this example is just for ui imspirtation. make the design responsive. the deisgn language is absically monospace style, minimal beautiful interface.
 
 requirements:
 </userInstructions>

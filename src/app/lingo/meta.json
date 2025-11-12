@@ -1,6 +1,586 @@
 {
   "version": 0.1,
   "files": {
+    "../components/ImageWithAnnotations.tsx": {
+      "scopes": {
+        "4/declaration/body/4/argument/1-alt": {
+          "type": "attribute",
+          "hash": "543fb8f26c9b132820a368506838cae2",
+          "context": "",
+          "skip": false,
+          "overrides": {},
+          "content": "Annotated image"
+        }
+      }
+    },
+    "chat/page.tsx": {
+      "scopes": {
+        "8/declaration/body/14/argument/11/1/5/3-title": {
+          "type": "attribute",
+          "hash": "95b61401d8d71c0805fc1bbb90e1048d",
+          "context": "",
+          "skip": false,
+          "overrides": {},
+          "content": "Add image"
+        },
+        "8/declaration/body/14/argument/11/1/5/5-placeholder": {
+          "type": "attribute",
+          "hash": "0204cb25a941d1d9a894c80f223bc33d",
+          "context": "",
+          "skip": false,
+          "overrides": {},
+          "content": "Ask any work question... I speak your language!"
+        },
+        "8/declaration/body/14/argument/11/1/5/7/3": {
+          "type": "element",
+          "hash": "1fc4caee168f609887a97acf614a9bdb",
+          "context": "",
+          "skip": false,
+          "overrides": {},
+          "content": "[SEND]"
+        },
+        "8/declaration/body/14/argument/11/1/7/1": {
+          "type": "element",
+          "hash": "5cc56e5f3d6433caf8a1c38c1f4e0d7f",
+          "context": "",
+          "skip": false,
+          "overrides": {},
+          "content": "<expression/> Your Pocket Senpai - Expert colleague at work"
+        },
+        "8/declaration/body/14/argument/11/1/7/3": {
+          "type": "element",
+          "hash": "a55b38f6678ab9f542a09af5d73ec593",
+          "context": "",
+          "skip": false,
+          "overrides": {},
+          "content": "STATUS: <function:status.toUpperCase/>"
+        },
+        "8/declaration/body/14/argument/3/1/1/1/1/3": {
+          "type": "element",
+          "hash": "d37331f67133dd0b3a86375241ca09ea",
+          "context": "",
+          "skip": false,
+          "overrides": {},
+          "content": "POCKET_SENPAI.CHAT"
+        },
+        "8/declaration/body/14/argument/3/1/1/1/3": {
+          "type": "element",
+          "hash": "67b1b80087e078c7b911cfaebc4e218a",
+          "context": "",
+          "skip": false,
+          "overrides": {},
+          "content": "Your expert colleague - understands images, manuals, and speaks your language"
+        },
+        "8/declaration/body/14/argument/3/1/1/3/1/3": {
+          "type": "element",
+          "hash": "7973c163f803d3c5b6ca88e188159b32",
+          "context": "",
+          "skip": false,
+          "overrides": {},
+          "content": "[HOME]"
+        },
+        "8/declaration/body/14/argument/7/1/1/expression/alternate/1/expression/0/body/1/1/1/expression/alternate/3": {
+          "type": "element",
+          "hash": "ed9e7fff87ec04be6b2b353087936afb",
+          "context": "",
+          "skip": false,
+          "overrides": {},
+          "content": "AI_RESPONSE"
+        },
+        "8/declaration/body/14/argument/7/1/1/expression/alternate/1/expression/0/body/1/1/1/expression/consequent/3": {
+          "type": "element",
+          "hash": "f4873ed0582cd940aa88898ca7bf61e2",
+          "context": "",
+          "skip": false,
+          "overrides": {},
+          "content": "USER_INPUT"
+        },
+        "8/declaration/body/14/argument/7/1/1/expression/alternate/1/expression/0/body/3/11/expression/0/body/1/consequent/1/consequent/0/argument/1": {
+          "type": "element",
+          "hash": "80fbf7d3e7b70069e7726b18e5861bd2",
+          "context": "",
+          "skip": false,
+          "overrides": {},
+          "content": "<expression/> Detected {output.count} {output.object}(s)"
+        },
+        "8/declaration/body/14/argument/7/1/1/expression/alternate/1/expression/0/body/3/11/expression/0/body/1/consequent/2/consequent/0/argument/1": {
+          "type": "element",
+          "hash": "84f268a6b042a678c87396eb3c9e1d5b",
+          "context": "",
+          "skip": false,
+          "overrides": {},
+          "content": "<expression/> Found {output.count} {output.object}(s)"
+        },
+        "8/declaration/body/14/argument/7/1/1/expression/alternate/1/expression/0/body/3/11/expression/0/body/1/consequent/3/argument/1": {
+          "type": "element",
+          "hash": "57194919431f1ce23175dc62bfacdcad",
+          "context": "",
+          "skip": false,
+          "overrides": {},
+          "content": "<expression/> Tool: <function:toolPart.type.replace/>"
+        },
+        "8/declaration/body/14/argument/7/1/1/expression/alternate/1/expression/0/body/3/11/expression/0/body/2/consequent/0/argument/1": {
+          "type": "element",
+          "hash": "4ad97ce62aa09dd14e20e7fcb610ae1b",
+          "context": "",
+          "skip": false,
+          "overrides": {},
+          "content": "<element:Loader2></element:Loader2> Using <function:toolPart.type.replace/>..."
+        },
+        "8/declaration/body/14/argument/7/1/1/expression/alternate/3/expression/right/1/1/3": {
+          "type": "element",
+          "hash": "bfc0e96e7d6a03a41ae44ccef4488956",
+          "context": "",
+          "skip": false,
+          "overrides": {},
+          "content": "PROCESSING..."
+        },
+        "8/declaration/body/14/argument/7/1/1/expression/consequent/1/1": {
+          "type": "element",
+          "hash": "b01d6fde820bfd52e5d99cf5de0fb037",
+          "context": "",
+          "skip": false,
+          "overrides": {},
+          "content": "WELCOME.MSG"
+        },
+        "8/declaration/body/14/argument/7/1/1/expression/consequent/3/1/3": {
+          "type": "element",
+          "hash": "f3994e30b5c0d320469e2ec24399ed5e",
+          "context": "",
+          "skip": false,
+          "overrides": {},
+          "content": "Ask Anything About Your Work"
+        },
+        "8/declaration/body/14/argument/7/1/1/expression/consequent/3/1/5": {
+          "type": "element",
+          "hash": "3cf33a7bf21c9c6d31928e33f8edaa72",
+          "context": "",
+          "skip": false,
+          "overrides": {},
+          "content": "I can help with machinery, procedures, maintenance, troubleshooting, and any work-related questions"
+        },
+        "8/declaration/body/14/argument/7/1/1/expression/consequent/3/3/1/1": {
+          "type": "element",
+          "hash": "ecb56be0a713d10a12da5b8e153c70e6",
+          "context": "",
+          "skip": false,
+          "overrides": {},
+          "content": "<element:span><expression/></element:span> EMERGENCY & SAFETY"
+        },
+        "8/declaration/body/14/argument/7/1/1/expression/consequent/3/3/1/3": {
+          "type": "element",
+          "hash": "ac32681b9b8982555efd71c8af1b9192",
+          "context": "",
+          "skip": false,
+          "overrides": {},
+          "content": "\"Machine is overheating, what do I do?\""
+        },
+        "8/declaration/body/14/argument/7/1/1/expression/consequent/3/3/3/1": {
+          "type": "element",
+          "hash": "0f1a88912a662659aa38bdd05f9e6c3c",
+          "context": "",
+          "skip": false,
+          "overrides": {},
+          "content": "<element:span><expression/></element:span> MACHINERY & EQUIPMENT"
+        },
+        "8/declaration/body/14/argument/7/1/1/expression/consequent/3/3/3/3": {
+          "type": "element",
+          "hash": "c036ecea857b0fd38ba53cb504464b64",
+          "context": "",
+          "skip": false,
+          "overrides": {},
+          "content": "\"How do I fix this error code on the press?\""
+        },
+        "8/declaration/body/14/argument/7/1/1/expression/consequent/3/3/5/1": {
+          "type": "element",
+          "hash": "003449da036cdf5aede85876c38dfa5f",
+          "context": "",
+          "skip": false,
+          "overrides": {},
+          "content": "<element:span><expression/></element:span> MAINTENANCE & REPAIR"
+        },
+        "8/declaration/body/14/argument/7/1/1/expression/consequent/3/3/5/3": {
+          "type": "element",
+          "hash": "9291769d89edaa8c106b610206e309bb",
+          "context": "",
+          "skip": false,
+          "overrides": {},
+          "content": "\"What tools do I need to replace this part?\""
+        },
+        "8/declaration/body/14/argument/7/1/1/expression/consequent/3/3/7/1": {
+          "type": "element",
+          "hash": "cc0a3f3391ab19193c035735bd5004ef",
+          "context": "",
+          "skip": false,
+          "overrides": {},
+          "content": "<element:span><expression/></element:span> MANUAL TRANSLATION"
+        },
+        "8/declaration/body/14/argument/7/1/1/expression/consequent/3/3/7/3": {
+          "type": "element",
+          "hash": "e445faaff2a3277b3bc7f368ee327f1d",
+          "context": "",
+          "skip": false,
+          "overrides": {},
+          "content": "\"What does this Japanese procedure mean?\""
+        }
+      }
+    },
+    "memories/page.tsx": {
+      "scopes": {
+        "7/declaration/body/20/argument/3/1/1/1/1/3": {
+          "type": "element",
+          "hash": "cf2a4b8bf7c34e264db76df68185b6bd",
+          "context": "",
+          "skip": false,
+          "overrides": {},
+          "content": "DOCUMENT_MANAGER.SYS"
+        },
+        "7/declaration/body/20/argument/3/1/1/1/3": {
+          "type": "element",
+          "hash": "5e4cb04834232580b3b300eb6c6669cf",
+          "context": "",
+          "skip": false,
+          "overrides": {},
+          "content": "Add work manuals, procedures, and documents for Pocket Senpai to reference"
+        },
+        "7/declaration/body/20/argument/3/1/1/3/1/1": {
+          "type": "element",
+          "hash": "bb4a4260b0425b239a71c2d5ca09ca89",
+          "context": "",
+          "skip": false,
+          "overrides": {},
+          "content": "[CHAT]"
+        },
+        "7/declaration/body/20/argument/3/1/1/3/1/3": {
+          "type": "element",
+          "hash": "cce5e8331f95bb5a549e46b5826e218e",
+          "context": "",
+          "skip": false,
+          "overrides": {},
+          "content": "[C]"
+        },
+        "7/declaration/body/20/argument/3/1/1/3/3/3": {
+          "type": "element",
+          "hash": "7973c163f803d3c5b6ca88e188159b32",
+          "context": "",
+          "skip": false,
+          "overrides": {},
+          "content": "[HOME]"
+        },
+        "7/declaration/body/20/argument/5/11/1/1": {
+          "type": "element",
+          "hash": "68142877b7a20a59822cf0f28758f428",
+          "context": "",
+          "skip": false,
+          "overrides": {},
+          "content": "INFO.TXT"
+        },
+        "7/declaration/body/20/argument/5/11/3/1/1/1": {
+          "type": "element",
+          "hash": "508cd5ca40ce5c26188de0772f051cd2",
+          "context": "",
+          "skip": false,
+          "overrides": {},
+          "content": "<expression/> MANUALS & GUIDES:"
+        },
+        "7/declaration/body/20/argument/5/11/3/1/1/4": {
+          "type": "element",
+          "hash": "640bd8e9639c9252ef572c80cf72743b",
+          "context": "",
+          "skip": false,
+          "overrides": {},
+          "content": "Upload machinery manuals, safety procedures, work instructions"
+        },
+        "7/declaration/body/20/argument/5/11/3/1/3/1": {
+          "type": "element",
+          "hash": "044427c1a223a8586c2632c859c1a0e1",
+          "context": "",
+          "skip": false,
+          "overrides": {},
+          "content": "<expression/> SMART_PROCESSING:"
+        },
+        "7/declaration/body/20/argument/5/11/3/1/3/4": {
+          "type": "element",
+          "hash": "3a63f966c1e40aae806216c7821af52f",
+          "context": "",
+          "skip": false,
+          "overrides": {},
+          "content": "Documents become searchable and referenceable in chat"
+        },
+        "7/declaration/body/20/argument/5/11/3/1/5/1": {
+          "type": "element",
+          "hash": "defdbf7de58465c953ff54bd199ffb7e",
+          "context": "",
+          "skip": false,
+          "overrides": {},
+          "content": "<expression/> MULTI_LANGUAGE:"
+        },
+        "7/declaration/body/20/argument/5/11/3/1/5/4": {
+          "type": "element",
+          "hash": "1cd7db2e6ccef8c1a2c7444b0d99e54c",
+          "context": "",
+          "skip": false,
+          "overrides": {},
+          "content": "I can read Japanese documents and answer in your language"
+        },
+        "7/declaration/body/20/argument/5/3/1/1": {
+          "type": "element",
+          "hash": "ae96858b27cff8bfd6ed5d27a8db7be4",
+          "context": "",
+          "skip": false,
+          "overrides": {},
+          "content": "UPLOAD_NEW_DOCUMENT.FORM"
+        },
+        "7/declaration/body/20/argument/5/3/3/3/1": {
+          "type": "element",
+          "hash": "2445aa4b43b92ad34f76a91ee6d250f4",
+          "context": "",
+          "skip": false,
+          "overrides": {},
+          "content": "<element:FileText></element:FileText> [TEXT]"
+        },
+        "7/declaration/body/20/argument/5/3/3/3/3": {
+          "type": "element",
+          "hash": "8d4d57184a2136941cb7067ec29e899e",
+          "context": "",
+          "skip": false,
+          "overrides": {},
+          "content": "<element:Upload></element:Upload> [FILE]"
+        },
+        "7/declaration/body/20/argument/5/3/3/3/5": {
+          "type": "element",
+          "hash": "03bbed629c59e46bf9e6690db7987269",
+          "context": "",
+          "skip": false,
+          "overrides": {},
+          "content": "<element:LinkIcon></element:LinkIcon> [URL]"
+        },
+        "7/declaration/body/20/argument/5/3/3/5/1/expression/right/1": {
+          "type": "element",
+          "hash": "6640cf409ca34f3e39fa371c9383eea1",
+          "context": "",
+          "skip": false,
+          "overrides": {},
+          "content": "<expression/> CONTENT:"
+        },
+        "7/declaration/body/20/argument/5/3/3/5/1/expression/right/3-placeholder": {
+          "type": "attribute",
+          "hash": "153cc080aa393d21c05aaf1672bb82f0",
+          "context": "",
+          "skip": false,
+          "overrides": {},
+          "content": "Enter your content here..."
+        },
+        "7/declaration/body/20/argument/5/3/3/5/3/expression/right/1": {
+          "type": "element",
+          "hash": "6137f8c1b00272bb0efe1eaefaa22492",
+          "context": "",
+          "skip": false,
+          "overrides": {},
+          "content": "<expression/> FILE:"
+        },
+        "7/declaration/body/20/argument/5/3/3/5/3/expression/right/5": {
+          "type": "element",
+          "hash": "b50c7538f3075ed7683438d0eab648e2",
+          "context": "",
+          "skip": false,
+          "overrides": {},
+          "content": "Supported: PDF, Images, Office docs, Text files"
+        },
+        "7/declaration/body/20/argument/5/3/3/5/5/expression/right/1": {
+          "type": "element",
+          "hash": "e2ce61d59e197b8852c1ac97b420d6cb",
+          "context": "",
+          "skip": false,
+          "overrides": {},
+          "content": "<expression/> URL:"
+        },
+        "7/declaration/body/20/argument/5/3/3/5/5/expression/right/3-placeholder": {
+          "type": "attribute",
+          "hash": "9e377f153213aaaedd1fa62f1f753237",
+          "context": "",
+          "skip": false,
+          "overrides": {},
+          "content": "https://example.com"
+        },
+        "7/declaration/body/20/argument/5/3/3/5/5/expression/right/5": {
+          "type": "element",
+          "hash": "289898ae8de7eb91fdcf90fac2acc0c8",
+          "context": "",
+          "skip": false,
+          "overrides": {},
+          "content": "Supports web pages, Twitter/X, YouTube, and more"
+        },
+        "7/declaration/body/20/argument/5/3/3/5/7/1": {
+          "type": "element",
+          "hash": "27bbaa4c22cb509af09b7e13904c8338",
+          "context": "",
+          "skip": false,
+          "overrides": {},
+          "content": "<expression/> CONTAINER_TAG:"
+        },
+        "7/declaration/body/20/argument/5/3/3/5/7/3-placeholder": {
+          "type": "attribute",
+          "hash": "b09a4b5a0e944b4cee9c25d142f81456",
+          "context": "",
+          "skip": false,
+          "overrides": {},
+          "content": "pocket-senpai"
+        },
+        "7/declaration/body/20/argument/5/3/3/5/7/5": {
+          "type": "element",
+          "hash": "b3abb49083b121283024eb2de9d3b444",
+          "context": "",
+          "skip": false,
+          "overrides": {},
+          "content": "Group related content together"
+        },
+        "7/declaration/body/20/argument/5/3/3/5/9/1/expression/alternate/3": {
+          "type": "element",
+          "hash": "6383095fccf319f61ce85148c4bffce7",
+          "context": "",
+          "skip": false,
+          "overrides": {},
+          "content": "[UPLOAD_DOCUMENT]"
+        },
+        "7/declaration/body/20/argument/5/3/3/5/9/1/expression/consequent/3": {
+          "type": "element",
+          "hash": "08dab6188743c3db90aef442fbb16a1e",
+          "context": "",
+          "skip": false,
+          "overrides": {},
+          "content": "[UPLOADING...]"
+        },
+        "7/declaration/body/20/argument/5/3/3/7/expression/right/1/3": {
+          "type": "element",
+          "hash": "e1a49c792302ff46119a641f5672d147",
+          "context": "",
+          "skip": false,
+          "overrides": {},
+          "content": "UPLOAD_SUCCESS"
+        },
+        "7/declaration/body/20/argument/5/3/3/7/expression/right/3/expression/right": {
+          "type": "element",
+          "hash": "462b58d63a0ddbd9f02cc392a7ca2b1a",
+          "context": "",
+          "skip": false,
+          "overrides": {},
+          "content": "<expression/> File: {result.filename}"
+        },
+        "7/declaration/body/20/argument/5/3/3/7/expression/right/5": {
+          "type": "element",
+          "hash": "1335725640ffcb5f6232bf17b323a492",
+          "context": "",
+          "skip": false,
+          "overrides": {},
+          "content": "<expression/> Status: <function:result.status.toUpperCase/>"
+        },
+        "7/declaration/body/20/argument/5/3/3/7/expression/right/7": {
+          "type": "element",
+          "hash": "58427de0b15842b6ec1bb5e0108b2160",
+          "context": "",
+          "skip": false,
+          "overrides": {},
+          "content": "<expression/> ID: {result.id}"
+        },
+        "7/declaration/body/20/argument/5/3/3/9/expression/right/1": {
+          "type": "element",
+          "hash": "5c88a2a60622a4a60cfeeb65abb44d02",
+          "context": "",
+          "skip": false,
+          "overrides": {},
+          "content": "ERROR"
+        },
+        "7/declaration/body/20/argument/5/7/1/1/1/1": {
+          "type": "element",
+          "hash": "33eb7783ad59506b37d9cf4f8c2ea2fb",
+          "context": "",
+          "skip": false,
+          "overrides": {},
+          "content": "UPLOADED_DOCUMENTS.DB"
+        },
+        "7/declaration/body/20/argument/5/7/1/1/1/3": {
+          "type": "element",
+          "hash": "e50c5642a1988fd444e9eb919821e0e8",
+          "context": "",
+          "skip": false,
+          "overrides": {},
+          "content": "<expression/> {totalItems} <expression/> available"
+        },
+        "7/declaration/body/20/argument/5/7/1/1/3/3": {
+          "type": "element",
+          "hash": "b9a8ebe887650e9f6c3a699642ef2567",
+          "context": "",
+          "skip": false,
+          "overrides": {},
+          "content": "[REFRESH]"
+        },
+        "7/declaration/body/20/argument/5/7/3/1/expression/alternate/alternate/1/1/expression/0/body/1/5/1/3": {
+          "type": "element",
+          "hash": "646d864aab5966792b627be467287682",
+          "context": "",
+          "skip": false,
+          "overrides": {},
+          "content": "Created: <function:Date.toLocaleDateString/>"
+        },
+        "7/declaration/body/20/argument/5/7/3/1/expression/alternate/alternate/1/1/expression/0/body/1/5/3/3": {
+          "type": "element",
+          "hash": "e7e9fb515d5f4231057a9007b8f6ab50",
+          "context": "",
+          "skip": false,
+          "overrides": {},
+          "content": "Updated: <function:Date.toLocaleDateString/>"
+        },
+        "7/declaration/body/20/argument/5/7/3/1/expression/alternate/alternate/5/expression/right/1/3": {
+          "type": "element",
+          "hash": "0c49256e250b6565f73a9927a263c887",
+          "context": "",
+          "skip": false,
+          "overrides": {},
+          "content": "[PREV]"
+        },
+        "7/declaration/body/20/argument/5/7/3/1/expression/alternate/alternate/5/expression/right/3": {
+          "type": "element",
+          "hash": "9e69fd891d97f6a6b3aadfe6f23e4e3b",
+          "context": "",
+          "skip": false,
+          "overrides": {},
+          "content": "PAGE {currentPage}/{totalPages}"
+        },
+        "7/declaration/body/20/argument/5/7/3/1/expression/alternate/alternate/5/expression/right/5/1": {
+          "type": "element",
+          "hash": "5247146bd10f8d7d7fa54e2ab2c70bb3",
+          "context": "",
+          "skip": false,
+          "overrides": {},
+          "content": "[NEXT]"
+        },
+        "7/declaration/body/20/argument/5/7/3/1/expression/alternate/consequent/3": {
+          "type": "element",
+          "hash": "f27176f73d85304614e0a38e27705a54",
+          "context": "",
+          "skip": false,
+          "overrides": {},
+          "content": "NO_DOCUMENTS_FOUND"
+        },
+        "7/declaration/body/20/argument/5/7/3/1/expression/alternate/consequent/5": {
+          "type": "element",
+          "hash": "7e1aebc777871fa11666a6457f1f7d6d",
+          "context": "",
+          "skip": false,
+          "overrides": {},
+          "content": "Upload your first manual or document using the form above"
+        },
+        "7/declaration/body/20/argument/5/7/3/1/expression/consequent/3": {
+          "type": "element",
+          "hash": "c5c1f001b534bf9733bcbe3251bd22ab",
+          "context": "",
+          "skip": false,
+          "overrides": {},
+          "content": "LOADING_MEMORIES..."
+        }
+      }
+    },
     "page.tsx": {
       "scopes": {
         "3/body/4/argument/1": {
@@ -194,6 +774,382 @@
           "skip": false,
           "overrides": {},
           "content": "Globe icon"
+        },
+        "5/body/5/argument/1/3": {
+          "type": "element",
+          "hash": "a54150fc6e8bbc2d27198d41e8bf189b",
+          "context": "",
+          "skip": false,
+          "overrides": {},
+          "content": "[INSTALL_APP]"
+        },
+        "5/body/5/argument/1/5": {
+          "type": "element",
+          "hash": "e968d6252c25075e3bb944869f83044f",
+          "context": "",
+          "skip": false,
+          "overrides": {},
+          "content": "[INSTALL]"
+        },
+        "5/body/5/argument/3/expression/right/1": {
+          "type": "element",
+          "hash": "1a68582adbb56e43a3ac0bd439ed69f7",
+          "context": "",
+          "skip": false,
+          "overrides": {},
+          "content": "To install: Tap share button and select \"Add to Home Screen\""
+        },
+        "6/declaration/body/3/argument/1/11/1/1/1/1/1/3": {
+          "type": "element",
+          "hash": "b85071b54e593a82aa64ac7dfa1672d4",
+          "context": "",
+          "skip": false,
+          "overrides": {},
+          "content": "PROBLEMS.LOG"
+        },
+        "6/declaration/body/3/argument/1/11/1/1/1/3/1/1/3": {
+          "type": "element",
+          "hash": "cae503d952b22e257b81da6343014764",
+          "context": "",
+          "skip": false,
+          "overrides": {},
+          "content": "Complex machinery manuals only available in technical Japanese"
+        },
+        "6/declaration/body/3/argument/1/11/1/1/1/3/1/3/3": {
+          "type": "element",
+          "hash": "412a9feaaeddcca01e12b675e816825a",
+          "context": "",
+          "skip": false,
+          "overrides": {},
+          "content": "No time to translate during emergency situations"
+        },
+        "6/declaration/body/3/argument/1/11/1/1/1/3/1/5/3": {
+          "type": "element",
+          "hash": "f75fe1e9415406f67f8fd4fca60dbc1a",
+          "context": "",
+          "skip": false,
+          "overrides": {},
+          "content": "Safety risks when you can't understand critical instructions"
+        },
+        "6/declaration/body/3/argument/1/11/1/1/1/3/1/7/3": {
+          "type": "element",
+          "hash": "2b5648f5847ead2a79023e44e6e4c0fd",
+          "context": "",
+          "skip": false,
+          "overrides": {},
+          "content": "Language barrier affects your confidence and productivity"
+        },
+        "6/declaration/body/3/argument/1/11/1/1/3/1/1/3": {
+          "type": "element",
+          "hash": "a558cf7ebf4a620c2d9e4f6ac9afe0f7",
+          "context": "",
+          "skip": false,
+          "overrides": {},
+          "content": "SOLUTIONS.LOG"
+        },
+        "6/declaration/body/3/argument/1/11/1/1/3/3/1/1/3": {
+          "type": "element",
+          "hash": "6b30b10ebef2cc9b0fd3b8a0076a71f5",
+          "context": "",
+          "skip": false,
+          "overrides": {},
+          "content": "Ask questions in Vietnamese, Tagalog, English, or your native language"
+        },
+        "6/declaration/body/3/argument/1/11/1/1/3/3/1/3/3": {
+          "type": "element",
+          "hash": "e0526d0db0e87ea65495879ffe489cf3",
+          "context": "",
+          "skip": false,
+          "overrides": {},
+          "content": "Get instant, clear answers to any work question in seconds"
+        },
+        "6/declaration/body/3/argument/1/11/1/1/3/3/1/5/3": {
+          "type": "element",
+          "hash": "bb347dd4fa2e6a0ac229d9ea32a9a41d",
+          "context": "",
+          "skip": false,
+          "overrides": {},
+          "content": "Upload machinery manuals and documents for reference"
+        },
+        "6/declaration/body/3/argument/1/11/1/1/3/3/1/7/3": {
+          "type": "element",
+          "hash": "15709fa4957dd7856e1b6fd80945189e",
+          "context": "",
+          "skip": false,
+          "overrides": {},
+          "content": "Available 24/7 on your phone - like having an expert colleague"
+        },
+        "6/declaration/body/3/argument/1/15/1/1/1/1": {
+          "type": "element",
+          "hash": "ef876a87bf5be44466072765294c878c",
+          "context": "",
+          "skip": false,
+          "overrides": {},
+          "content": "EXAMPLE_QUERIES.DAT"
+        },
+        "6/declaration/body/3/argument/1/15/1/1/1/3": {
+          "type": "element",
+          "hash": "358b37e21ad87cb41e1ff5073e4c07e1",
+          "context": "",
+          "skip": false,
+          "overrides": {},
+          "content": "Get immediate answers to any work-related questions"
+        },
+        "6/declaration/body/3/argument/1/15/1/1/3/1/1/1": {
+          "type": "element",
+          "hash": "6bb1d3134d541695196f168cdd7211e4",
+          "context": "",
+          "skip": false,
+          "overrides": {},
+          "content": "EMERGENCY"
+        },
+        "6/declaration/body/3/argument/1/15/1/1/3/1/3/1": {
+          "type": "element",
+          "hash": "c19e8e15d145e38393a7f798e998e1c6",
+          "context": "",
+          "skip": false,
+          "overrides": {},
+          "content": "<expression/> \"What do I do if the machine is overheating?\""
+        },
+        "6/declaration/body/3/argument/1/15/1/1/3/1/3/3": {
+          "type": "element",
+          "hash": "a7a7c37416a732c6def1dc08adddd9ba",
+          "context": "",
+          "skip": false,
+          "overrides": {},
+          "content": "<expression/> \"Emergency stop button not working, help!\""
+        },
+        "6/declaration/body/3/argument/1/15/1/1/3/1/3/5": {
+          "type": "element",
+          "hash": "46c11d0570d4ccfae69a64fbb5735bed",
+          "context": "",
+          "skip": false,
+          "overrides": {},
+          "content": "<expression/> \"Machine making strange noises, is it safe?\""
+        },
+        "6/declaration/body/3/argument/1/15/1/1/3/3/1/1": {
+          "type": "element",
+          "hash": "a81b222bb7b3ae993f54c12af1e6a63d",
+          "context": "",
+          "skip": false,
+          "overrides": {},
+          "content": "OPERATIONS"
+        },
+        "6/declaration/body/3/argument/1/15/1/1/3/3/3/1": {
+          "type": "element",
+          "hash": "42fe569f484a7638167b14030666637e",
+          "context": "",
+          "skip": false,
+          "overrides": {},
+          "content": "<expression/> \"How do I safely clean this equipment?\""
+        },
+        "6/declaration/body/3/argument/1/15/1/1/3/3/3/3": {
+          "type": "element",
+          "hash": "668f57cf81d363b29e9195c03fc5ac61",
+          "context": "",
+          "skip": false,
+          "overrides": {},
+          "content": "<expression/> \"What safety gear do I need for this task?\""
+        },
+        "6/declaration/body/3/argument/1/15/1/1/3/3/3/5": {
+          "type": "element",
+          "hash": "590fda276895c0d157576b44bc801560",
+          "context": "",
+          "skip": false,
+          "overrides": {},
+          "content": "<expression/> \"Step-by-step startup procedure?\""
+        },
+        "6/declaration/body/3/argument/1/15/1/1/3/5/1/1": {
+          "type": "element",
+          "hash": "fa3b3b322b64e7663ebdd23de1601461",
+          "context": "",
+          "skip": false,
+          "overrides": {},
+          "content": "MAINTENANCE"
+        },
+        "6/declaration/body/3/argument/1/15/1/1/3/5/3/1": {
+          "type": "element",
+          "hash": "6dc126f4603c7ba26231fa3098e9094f",
+          "context": "",
+          "skip": false,
+          "overrides": {},
+          "content": "<expression/> \"How often should I check the oil level?\""
+        },
+        "6/declaration/body/3/argument/1/15/1/1/3/5/3/3": {
+          "type": "element",
+          "hash": "c2791e539fef4d66d40bc1afdea23b24",
+          "context": "",
+          "skip": false,
+          "overrides": {},
+          "content": "<expression/> \"What does this warning light mean?\""
+        },
+        "6/declaration/body/3/argument/1/15/1/1/3/5/3/5": {
+          "type": "element",
+          "hash": "e1a237557b14daf699fdbd720e753191",
+          "context": "",
+          "skip": false,
+          "overrides": {},
+          "content": "<expression/> \"Safe way to replace this part?\""
+        },
+        "6/declaration/body/3/argument/1/19/1/1/1/1": {
+          "type": "element",
+          "hash": "3ff46a0d740efbea3016154a27dc22b5",
+          "context": "",
+          "skip": false,
+          "overrides": {},
+          "content": "FEATURES.SYS"
+        },
+        "6/declaration/body/3/argument/1/19/1/1/3/1/1/3": {
+          "type": "element",
+          "hash": "2cce6b9066be0ee376358aea06413050",
+          "context": "",
+          "skip": false,
+          "overrides": {},
+          "content": "MULTI_LANGUAGE"
+        },
+        "6/declaration/body/3/argument/1/19/1/1/3/1/1/5": {
+          "type": "element",
+          "hash": "ceb6428932f37a8a117bc95697eeb0f3",
+          "context": "",
+          "skip": false,
+          "overrides": {},
+          "content": "Vietnamese, Tagalog, English, Japanese, and more"
+        },
+        "6/declaration/body/3/argument/1/19/1/1/3/3/1/3": {
+          "type": "element",
+          "hash": "de90617128ccd689ae14bea8e8b1936e",
+          "context": "",
+          "skip": false,
+          "overrides": {},
+          "content": "INSTANT_ANSWERS"
+        },
+        "6/declaration/body/3/argument/1/19/1/1/3/3/1/5": {
+          "type": "element",
+          "hash": "0ca35a3d487436f1b0505f0fb1d3bc3f",
+          "context": "",
+          "skip": false,
+          "overrides": {},
+          "content": "Get expert guidance in seconds, not minutes"
+        },
+        "6/declaration/body/3/argument/1/19/1/1/3/5/1/3": {
+          "type": "element",
+          "hash": "cee28fd6e9fa76efb1c9a590bc02c5d2",
+          "context": "",
+          "skip": false,
+          "overrides": {},
+          "content": "24/7_AVAILABLE"
+        },
+        "6/declaration/body/3/argument/1/19/1/1/3/5/1/5": {
+          "type": "element",
+          "hash": "1790364ea2bd56107769ebbb85ee3e84",
+          "context": "",
+          "skip": false,
+          "overrides": {},
+          "content": "Works on any phone, install as an app"
+        },
+        "6/declaration/body/3/argument/1/19/1/1/3/7/1/3": {
+          "type": "element",
+          "hash": "ac8ea464b4fea1382f84e18167daf2da",
+          "context": "",
+          "skip": false,
+          "overrides": {},
+          "content": "EXPERT_KNOWLEDGE"
+        },
+        "6/declaration/body/3/argument/1/19/1/1/3/7/1/5": {
+          "type": "element",
+          "hash": "e4d62cb863588acfe30edb02765497fd",
+          "context": "",
+          "skip": false,
+          "overrides": {},
+          "content": "Like having a senior colleague who knows everything"
+        },
+        "6/declaration/body/3/argument/1/23/1/1/1/1/3": {
+          "type": "element",
+          "hash": "f1653471e6ae468e11affc235c8a577b",
+          "context": "",
+          "skip": false,
+          "overrides": {},
+          "content": "YOUR_EXPERT_IS_READY"
+        },
+        "6/declaration/body/3/argument/1/23/1/1/1/3": {
+          "type": "element",
+          "hash": "b38bc6e39577260e9d88f47caed52319",
+          "context": "",
+          "skip": false,
+          "overrides": {},
+          "content": "Don't let language barriers slow you down. Your expert senior colleague is ready to help 24/7."
+        },
+        "6/declaration/body/3/argument/1/23/1/1/1/5/1": {
+          "type": "element",
+          "hash": "3f2a3390d9d31e6989b73fe0a0b958e8",
+          "context": "",
+          "skip": false,
+          "overrides": {},
+          "content": "[START_NOW]"
+        },
+        "6/declaration/body/3/argument/1/27/1/1/1": {
+          "type": "element",
+          "hash": "e37ca6b34fb19cc40a6ee067c62be01d",
+          "context": "",
+          "skip": false,
+          "overrides": {},
+          "content": "POCKET_SENPAI_v1.0 | SAFETY_ASSISTANT_SYSTEM"
+        },
+        "6/declaration/body/3/argument/1/27/1/1/3": {
+          "type": "element",
+          "hash": "3e6dbd76855279050de62674698fcac6",
+          "context": "",
+          "skip": false,
+          "overrides": {},
+          "content": "<expression/> STATUS: ONLINE | READY_TO_ASSIST"
+        },
+        "6/declaration/body/3/argument/1/3/1/1/1/3": {
+          "type": "element",
+          "hash": "924d4ba73b0c093f147e025a7f8d04ca",
+          "context": "",
+          "skip": false,
+          "overrides": {},
+          "content": "POCKET_SENPAI_v1.0"
+        },
+        "6/declaration/body/3/argument/1/7/1/1/1/1/3": {
+          "type": "element",
+          "hash": "582e203e9910aaf0b46deee132e960e6",
+          "context": "",
+          "skip": false,
+          "overrides": {},
+          "content": "EXPERT_SENPAI.SYS"
+        },
+        "6/declaration/body/3/argument/1/7/1/1/3/1": {
+          "type": "element",
+          "hash": "127d02ab4077aec596116b5050549e91",
+          "context": "",
+          "skip": false,
+          "overrides": {},
+          "content": "Your Expert Senior Colleague"
+        },
+        "6/declaration/body/3/argument/1/7/1/1/3/3": {
+          "type": "element",
+          "hash": "6e1995877176e6b5ae6e28a8ae51c67d",
+          "context": "",
+          "skip": false,
+          "overrides": {},
+          "content": "Like having a knowledgeable senior coworker who's always available. Ask anything about your work in your native language - from machinery questions to procedures to troubleshooting."
+        },
+        "6/declaration/body/3/argument/1/7/1/1/3/5/1/3": {
+          "type": "element",
+          "hash": "596e9ee4e17662a252131b79d72ae4eb",
+          "context": "",
+          "skip": false,
+          "overrides": {},
+          "content": "[ASK_QUESTION]"
+        },
+        "6/declaration/body/3/argument/1/7/1/1/3/5/3/3": {
+          "type": "element",
+          "hash": "f8ebb4b169b7cd42b7267ec46877ed42",
+          "context": "",
+          "skip": false,
+          "overrides": {},
+          "content": "[UPLOAD_MANUAL]"
         }
       }
     }
