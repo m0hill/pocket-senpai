@@ -1,0 +1,1363 @@
+<context>
+
+<fileTree>
+.
+└── portfolio/
+    ├── app/
+    │   ├── globals.css
+    │   ├── layout.tsx
+    │   └── page.tsx
+    └── components/
+        ├── ui/
+        │   └── button.tsx
+        ├── auth-guard.tsx
+        ├── chatbot.tsx
+        ├── data-loader.tsx
+        └── theme-provider.tsx
+</fileTree>
+
+<file path="portfolio/app/page.tsx">
+```typescriptreact
+'use client'
+
+import {
+  Banknote,
+  Building2,
+  ChevronDown,
+  ChevronUp,
+  Clock,
+  Coins,
+  DollarSign,
+  Globe,
+  Moon,
+  Sun,
+  TrendingDown,
+  TrendingUp,
+  Pen as Yen,
+} from 'lucide-react'
+import { useTheme } from 'next-themes'
+import { useEffect, useRef, useState } from 'react'
+import { Chatbot } from '@/components/chatbot'
+import { DataLoader, loadJSONFile } from '@/components/data-loader'
+import { Button } from '@/components/ui/button'
+import { generateDemoData, generateDemoTimestamps } from '@/lib/demo-data'
+
+interface AssetSummaryItem {
+  item: string
+  marketValueJPY: number | string
+  changeFromPreviousDayJPY: number
+  changeFromPreviousDayPercent: number
+  changeFromPreviousMonthJPY: number
+  changeFromPreviousMonthPercent: number
+  unrealizedGainLossJPY: number | null
+  unrealizedGainLossPercent: number | null
+  realizedGainLossJPY: number | null
+  dividendsJPY: number | null
+  dividendsForeignCurrency: number | null
+}
+
+interface DetailedHolding {
+  type: string
+  ticker: string | number | null
+  name: string
+  account: string | null
+  quantity: number
+  unit: string | null
+  avgAcquisitionPrice: number | null
+  currentPrice: number
+  changeFromPreviousDay: number | null
+  marketValueJPY: number
+  marketValueForeignCurrency: string | null
+  unrealizedGainLossJPY: number | null
+  unrealizedGainLossPercent: number | null
+}
+
+interface ExchangeRate {
+  currency: string
+  rate: number
+  unit: string
+  lastUpdated: string
+}
+
+interface AssetData {
+  assetSummary: AssetSummaryItem[]
+  detailedHoldings: DetailedHolding[]
+  referenceExchangeRates: ExchangeRate[]
+}
+
+const formatCurrency = (value: number | null, currency: 'JPY' | 'USD' = 'JPY'): string => {
+  if (value === null || value === undefined) return '---'
+
+  if (currency === 'JPY') {
+    return `¥${value.toLocaleString()}`
+  } else {
+    return `$${value.toLocaleString()}`
+  }
+}
+
+const formatPercent = (value: number | null): string => {
+  if (value === null || value === undefined) return '---'
+  const sign = value >= 0 ? '+' : ''
+  return `${sign}${value.toFixed(2)}%`
+}
+
+const getAssetIcon = (type: string) => {
+  switch (type.toLowerCase()) {
+    case 'domestic stocks':
+      return <Building2 className="w-4 h-4" />
+    case 'us stocks':
+      return <DollarSign className="w-4 h-4" />
+    case 'investment trust':
+      return <Globe className="w-4 h-4" />
+    case 'gold/platinum':
+      return <Coins className="w-4 h-4" />
+    case 'foreign currency deposit':
+      return <Banknote className="w-4 h-4" />
+    default:
+      return <Yen className="w-4 h-4" />
+  }
+}
+
+const parseTimestamp = (filename: string): Date | null => {
+  const match = filename.match(/(\d{8})_(\d{6})\.json$/)
+  if (!match) return null
+
+  const [, dateStr, timeStr] = match
+  const year = Number.parseInt(dateStr.substring(0, 4))
+  const month = Number.parseInt(dateStr.substring(4, 6)) - 1 // JS months are 0-indexed
+  const day = Number.parseInt(dateStr.substring(6, 8))
+  const hour = Number.parseInt(timeStr.substring(0, 2))
+  const minute = Number.parseInt(timeStr.substring(2, 4))
+  const second = Number.parseInt(timeStr.substring(4, 6))
+
+  return new Date(year, month, day, hour, minute, second)
+}
+
+const formatJSTTime = (date: Date): string => {
+  return date
+    .toLocaleString('ja-JP', {
+      timeZone: 'Asia/Tokyo',
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      hour12: false,
+    })
+    .replace(/\//g, '-')
+}
+
+export default function FinancialDashboard() {
+  const { theme, setTheme } = useTheme()
+  const [activeTab, setActiveTab] = useState<'summary' | 'holdings' | 'rates' | 'chat'>('summary')
+  const [selectedTimestamp, setSelectedTimestamp] = useState<string>('')
+  const [availableTimestamps, setAvailableTimestamps] = useState<string[]>([])
+  const [data, setData] = useState<AssetData | null>(null)
+  const [, setIsLoading] = useState(true)
+  const [showTimestampDropdown, setShowTimestampDropdown] = useState(false)
+  const [summarySortAsc, setSummarySortAsc] = useState(false)
+  const [holdingsSortAsc, setHoldingsSortAsc] = useState(false)
+  const [isGuestMode, setIsGuestMode] = useState(false)
+  const dropdownRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setShowTimestampDropdown(false)
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [])
+
+  useEffect(() => {
+    const guestMode = sessionStorage.getItem('portfolio-guest-mode') === 'true'
+    setIsGuestMode(guestMode)
+
+    if (guestMode) {
+      // In guest mode, set up demo data immediately
+      const demoTimestamps = generateDemoTimestamps()
+      const demoData = generateDemoData()
+      setAvailableTimestamps(demoTimestamps)
+      setSelectedTimestamp(demoTimestamps[0])
+      setData(demoData)
+      setIsLoading(false)
+    }
+  }, [])
+
+  const handleTimestampsLoaded = async (timestamps: string[]) => {
+    const guestMode = sessionStorage.getItem('portfolio-guest-mode') === 'true'
+    if (guestMode) {
+      return // Skip if in guest mode
+    }
+
+    setAvailableTimestamps(timestamps)
+    if (timestamps.length > 0) {
+      setSelectedTimestamp(timestamps[0])
+      await loadDataForTimestamp(timestamps[0])
+    } else {
+      // Handle case where no data files are found
+      setIsLoading(false)
+    }
+  }
+
+  const loadDataForTimestamp = async (timestamp: string) => {
+    const guestMode = sessionStorage.getItem('portfolio-guest-mode') === 'true'
+    if (guestMode) {
+      setData(generateDemoData())
+      return
+    }
+
+    try {
+      setIsLoading(true)
+      const data = await loadJSONFile(timestamp)
+      setData(data as AssetData)
+    } catch (error) {
+      console.error(`Failed to load data for ${timestamp}:`, error)
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  const handleTimestampChange = async (timestamp: string) => {
+    setSelectedTimestamp(timestamp)
+    setShowTimestampDropdown(false)
+    const guestMode = sessionStorage.getItem('portfolio-guest-mode') === 'true'
+    if (guestMode) {
+      setData(generateDemoData())
+    } else {
+      await loadDataForTimestamp(timestamp)
+    }
+  }
+
+  const toggleTheme = () => {
+    setTheme(theme === 'dark' ? 'light' : 'dark')
+  }
+
+  const toggleSummarySort = () => {
+    setSummarySortAsc(!summarySortAsc)
+  }
+
+  const toggleHoldingsSort = () => {
+    setHoldingsSortAsc(!holdingsSortAsc)
+  }
+
+  // The DataLoader component MUST be rendered to trigger the data fetch.
+  // Since it returns null, it has no visual output.
+  if (data === null) {
+    const guestMode = sessionStorage.getItem('portfolio-guest-mode') === 'true'
+
+    return (
+      <>
+        {!guestMode && <DataLoader onTimestampsLoaded={handleTimestampsLoaded} />}
+        <div className="min-h-screen font-mono text-sm flex items-center justify-center">
+          <div className="bg-background text-foreground p-8 border border-border">
+            <div className="flex items-center gap-2">
+              <Clock className="w-4 h-4 animate-spin" />
+              <span>{guestMode ? 'LOADING_DEMO_DATA...' : 'LOADING_DATA...'}</span>
+            </div>
+          </div>
+        </div>
+      </>
+    )
+  }
+
+  return (
+    <div className="min-h-screen font-mono text-xs sm:text-sm">
+      {/* No longer need DataLoader here, it's handled above */}
+      <div className="bg-background text-foreground p-2 sm:p-4">
+        {/* Header */}
+        <div className="border border-border mb-4 sm:mb-6">
+          <div className="bg-muted p-2 sm:p-3 border-b border-border">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 sm:gap-0">
+              <div className="flex items-center gap-2">
+                <span className="text-base sm:text-lg">{'>'}</span>
+                <span className="font-bold text-sm sm:text-base">PORTFOLIO_TERMINAL_v1.0</span>
+              </div>
+              <div className="flex items-center gap-2 w-full sm:w-auto">
+                <div className="relative flex-1 sm:flex-none" ref={dropdownRef}>
+                  <button
+                    onClick={() => setShowTimestampDropdown(!showTimestampDropdown)}
+                    className="flex items-center justify-between sm:justify-center gap-2 px-2 sm:px-3 py-1 border border-border hover:bg-muted text-xs w-full sm:w-auto min-w-0"
+                  >
+                    <Clock className="w-3 h-3 flex-shrink-0" />
+                    <span className="truncate">
+                      {selectedTimestamp
+                        ? formatJSTTime(parseTimestamp(selectedTimestamp) || new Date())
+                        : 'SELECT_TIME'}
+                    </span>
+                    <ChevronDown className="w-3 h-3 flex-shrink-0" />
+                  </button>
+
+                  {showTimestampDropdown && (
+                    <div className="absolute top-full left-0 sm:right-0 mt-1 bg-background border border-border shadow-lg z-10 w-full sm:min-w-[200px] max-h-48 overflow-y-auto">
+                      {availableTimestamps.map(timestamp => {
+                        const date = parseTimestamp(timestamp)
+                        return (
+                          <button
+                            key={timestamp}
+                            onClick={() => handleTimestampChange(timestamp)}
+                            className={`w-full text-left px-3 py-2 text-xs hover:bg-muted border-b border-border last:border-b-0 ${
+                              selectedTimestamp === timestamp
+                                ? 'bg-primary text-primary-foreground'
+                                : ''
+                            }`}
+                          >
+                            {date ? formatJSTTime(date) : timestamp}
+                          </button>
+                        )
+                      })}
+                    </div>
+                  )}
+                </div>
+
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={toggleTheme}
+                  className="font-mono flex-shrink-0"
+                >
+                  {theme === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+                  <span className="hidden sm:inline ml-1">
+                    {theme === 'dark' ? '[LIGHT]' : '[DARK]'}
+                  </span>
+                </Button>
+              </div>
+            </div>
+          </div>
+
+          {/* Navigation */}
+          <div className="p-2 sm:p-3 border-b border-border overflow-x-auto">
+            <div className="flex gap-2 sm:gap-4 min-w-max">
+              {[
+                { key: 'summary', label: '[S]UMMARY', shortLabel: '[S]' },
+                { key: 'holdings', label: '[H]OLDINGS', shortLabel: '[H]' },
+                { key: 'rates', label: '[R]ATES', shortLabel: '[R]' },
+                ...(isGuestMode ? [] : [{ key: 'chat', label: '[C]HAT', shortLabel: '[C]' }]),
+              ].map(({ key, label, shortLabel }) => (
+                <button
+                  key={key}
+                  onClick={() => setActiveTab(key as 'summary' | 'holdings' | 'rates' | 'chat')}
+                  className={`px-2 sm:px-3 py-1 border text-xs whitespace-nowrap ${
+                    activeTab === key
+                      ? 'bg-primary text-primary-foreground border-primary'
+                      : 'border-border hover:bg-muted'
+                  }`}
+                >
+                  <span className="sm:hidden">{shortLabel}</span>
+                  <span className="hidden sm:inline">{label}</span>
+                </button>
+              ))}
+              {isGuestMode && (
+                <div className="px-2 sm:px-3 py-1 border border-yellow-500 text-xs whitespace-nowrap text-yellow-500 bg-yellow-500/10">
+                  <span className="sm:hidden">[DEMO]</span>
+                  <span className="hidden sm:inline">[DEMO_MODE]</span>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Content */}
+        {activeTab === 'summary' && (
+          <div className="space-y-4">
+            <div className="border border-border">
+              <div className="bg-muted p-2 border-b border-border">
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 sm:gap-0">
+                  <div className="flex flex-col sm:flex-row items-start sm:items-center gap-1 sm:gap-4">
+                    <span className="font-bold text-sm">ASSET_SUMMARY.LOG</span>
+                    <span className="text-xs text-muted-foreground">
+                      @{' '}
+                      {selectedTimestamp
+                        ? formatJSTTime(parseTimestamp(selectedTimestamp) || new Date())
+                        : 'UNKNOWN'}
+                    </span>
+                  </div>
+                  <button
+                    onClick={toggleSummarySort}
+                    className="flex items-center gap-1 text-xs hover:bg-background px-2 py-1 rounded self-end sm:self-auto"
+                  >
+                    <span className="hidden sm:inline">MARKET_VAL</span>
+                    <span className="sm:hidden">SORT</span>
+                    {summarySortAsc ? (
+                      <ChevronUp className="w-3 h-3" />
+                    ) : (
+                      <ChevronDown className="w-3 h-3" />
+                    )}
+                  </button>
+                </div>
+              </div>
+              <div className="p-2 sm:p-3">
+                {[...data.assetSummary]
+                  .sort((a, b) => {
+                    const aVal = typeof a.marketValueJPY === 'number' ? a.marketValueJPY : 0
+                    const bVal = typeof b.marketValueJPY === 'number' ? b.marketValueJPY : 0
+                    return summarySortAsc ? aVal - bVal : bVal - aVal
+                  })
+                  .map((item, index) => (
+                    <div
+                      key={index}
+                      className={`mb-3 sm:mb-4 last:mb-0 ${item.marketValueJPY === 0 || item.marketValueJPY === '未連携' ? 'opacity-50' : ''}`}
+                    >
+                      <div className="flex items-center gap-2 mb-2">
+                        {getAssetIcon(item.item)}
+                        <span
+                          className={`font-bold text-sm ${item.marketValueJPY === 0 || item.marketValueJPY === '未連携' ? 'text-muted-foreground' : 'text-primary'}`}
+                        >
+                          {item.item.toUpperCase()}
+                        </span>
+                      </div>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 text-xs ml-4 sm:ml-6">
+                        <div className="col-span-1 sm:col-span-2 lg:col-span-1">
+                          <span className="text-muted-foreground">MARKET_VAL:</span>{' '}
+                          <span className="font-semibold">
+                            {typeof item.marketValueJPY === 'number'
+                              ? formatCurrency(item.marketValueJPY)
+                              : `¥${item.marketValueJPY}`}
+                          </span>
+                        </div>
+                        <div
+                          className={`flex items-center gap-1 ${
+                            item.changeFromPreviousDayJPY >= 0 ? 'text-green-500' : 'text-red-500'
+                          }`}
+                        >
+                          {item.changeFromPreviousDayJPY >= 0 ? (
+                            <TrendingUp className="w-3 h-3 flex-shrink-0" />
+                          ) : (
+                            <TrendingDown className="w-3 h-3 flex-shrink-0" />
+                          )}
+                          <span className="whitespace-nowrap">DAY_CHG:</span>{' '}
+                          <span className="truncate">
+                            {formatCurrency(item.changeFromPreviousDayJPY)} (
+                            {formatPercent(item.changeFromPreviousDayPercent)})
+                          </span>
+                        </div>
+                        <div
+                          className={`flex items-center gap-1 ${
+                            item.changeFromPreviousMonthJPY >= 0 ? 'text-green-500' : 'text-red-500'
+                          }`}
+                        >
+                          {item.changeFromPreviousMonthJPY >= 0 ? (
+                            <TrendingUp className="w-3 h-3 flex-shrink-0" />
+                          ) : (
+                            <TrendingDown className="w-3 h-3 flex-shrink-0" />
+                          )}
+                          <span className="whitespace-nowrap">MTH_CHG:</span>{' '}
+                          <span className="truncate">
+                            {formatCurrency(item.changeFromPreviousMonthJPY)} (
+                            {formatPercent(item.changeFromPreviousMonthPercent)})
+                          </span>
+                        </div>
+                        {item.unrealizedGainLossJPY !== null && (
+                          <div
+                            className={`${item.unrealizedGainLossJPY >= 0 ? 'text-green-500' : 'text-red-500'}`}
+                          >
+                            <span className="text-muted-foreground">UNREALIZED:</span>{' '}
+                            <span className="font-semibold">
+                              {formatCurrency(item.unrealizedGainLossJPY)}
+                            </span>
+                          </div>
+                        )}
+                        {item.realizedGainLossJPY !== null && (
+                          <div
+                            className={`${item.realizedGainLossJPY >= 0 ? 'text-green-500' : 'text-red-500'}`}
+                          >
+                            <span className="text-muted-foreground">REALIZED:</span>{' '}
+                            <span className="font-semibold">
+                              {formatCurrency(item.realizedGainLossJPY)}
+                            </span>
+                          </div>
+                        )}
+                      </div>
+                      {index < data.assetSummary.length - 1 && (
+                        <div className="border-t border-border mt-3 pt-0"></div>
+                      )}
+                    </div>
+                  ))}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {activeTab === 'holdings' && (
+          <div className="space-y-4">
+            <div className="border border-border">
+              <div className="bg-muted p-2 border-b border-border">
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 sm:gap-0">
+                  <div className="flex flex-col sm:flex-row items-start sm:items-center gap-1 sm:gap-4">
+                    <span className="font-bold text-sm">DETAILED_HOLDINGS.LOG</span>
+                    <span className="text-xs text-muted-foreground">
+                      @{' '}
+                      {selectedTimestamp
+                        ? formatJSTTime(parseTimestamp(selectedTimestamp) || new Date())
+                        : 'UNKNOWN'}
+                    </span>
+                  </div>
+                  <button
+                    onClick={toggleHoldingsSort}
+                    className="flex items-center gap-1 text-xs hover:bg-background px-2 py-1 rounded self-end sm:self-auto"
+                  >
+                    <span className="hidden sm:inline">MARKET_VAL</span>
+                    <span className="sm:hidden">SORT</span>
+                    {holdingsSortAsc ? (
+                      <ChevronUp className="w-3 h-3" />
+                    ) : (
+                      <ChevronDown className="w-3 h-3" />
+                    )}
+                  </button>
+                </div>
+              </div>
+              <div className="p-2 sm:p-3">
+                {[...data.detailedHoldings]
+                  .sort((a, b) =>
+                    holdingsSortAsc
+                      ? a.marketValueJPY - b.marketValueJPY
+                      : b.marketValueJPY - a.marketValueJPY
+                  )
+                  .map((holding, index) => (
+                    <div key={index} className="mb-3 sm:mb-4 last:mb-0">
+                      <div className="flex items-start gap-2 mb-2">
+                        {getAssetIcon(holding.type)}
+                        <div className="min-w-0 flex-1">
+                          <span className="font-bold text-primary text-sm block">
+                            {holding.ticker ? `[${holding.ticker}]` : ''} {holding.name}
+                          </span>
+                          <span className="text-xs text-muted-foreground">{holding.type}</span>
+                        </div>
+                      </div>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2 text-xs ml-4 sm:ml-6">
+                        <div className="col-span-1 sm:col-span-2 lg:col-span-1">
+                          <span className="text-muted-foreground">MKT_VAL:</span>{' '}
+                          <span className="font-semibold">
+                            {formatCurrency(holding.marketValueJPY)}
+                          </span>
+                        </div>
+                        <div>
+                          <span className="text-muted-foreground">QTY:</span>{' '}
+                          <span className="font-medium">{holding.quantity.toLocaleString()}</span>
+                        </div>
+                        <div>
+                          <span className="text-muted-foreground">CURR_PRICE:</span>{' '}
+                          <span className="font-medium">
+                            {holding.unit === 'USD' ? '$' : '¥'}
+                            {holding.currentPrice.toLocaleString()}
+                          </span>
+                        </div>
+                        {holding.avgAcquisitionPrice && (
+                          <div>
+                            <span className="text-muted-foreground">AVG_COST:</span>{' '}
+                            <span className="font-medium">
+                              {holding.unit === 'USD' ? '$' : '¥'}
+                              {holding.avgAcquisitionPrice.toLocaleString()}
+                            </span>
+                          </div>
+                        )}
+                        {holding.changeFromPreviousDay !== null && (
+                          <div
+                            className={`${holding.changeFromPreviousDay >= 0 ? 'text-green-500' : 'text-red-500'}`}
+                          >
+                            <span className="text-muted-foreground">DAY_CHG:</span>{' '}
+                            <span className="font-semibold">
+                              {holding.unit === 'USD' ? '$' : '¥'}
+                              {holding.changeFromPreviousDay.toLocaleString()}
+                            </span>
+                          </div>
+                        )}
+                        {holding.unrealizedGainLossJPY !== null && (
+                          <div
+                            className={`col-span-1 sm:col-span-2 lg:col-span-1 ${holding.unrealizedGainLossJPY >= 0 ? 'text-green-500' : 'text-red-500'}`}
+                          >
+                            <span className="text-muted-foreground">P&L:</span>{' '}
+                            <span className="font-semibold">
+                              {formatCurrency(holding.unrealizedGainLossJPY)} (
+                              {formatPercent(holding.unrealizedGainLossPercent)})
+                            </span>
+                          </div>
+                        )}
+                        {holding.marketValueForeignCurrency && (
+                          <div>
+                            <span className="text-muted-foreground">USD_VAL:</span>{' '}
+                            <span className="font-medium">
+                              {holding.marketValueForeignCurrency}
+                            </span>
+                          </div>
+                        )}
+                      </div>
+                      {index < data.detailedHoldings.length - 1 && (
+                        <div className="border-t border-border mt-3 pt-0"></div>
+                      )}
+                    </div>
+                  ))}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {activeTab === 'rates' && (
+          <div className="space-y-4">
+            <div className="border border-border">
+              <div className="bg-muted p-2 border-b border-border">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-1 sm:gap-4">
+                  <span className="font-bold text-sm">EXCHANGE_RATES.LOG</span>
+                  <span className="text-xs text-muted-foreground">
+                    @{' '}
+                    {selectedTimestamp
+                      ? formatJSTTime(parseTimestamp(selectedTimestamp) || new Date())
+                      : 'UNKNOWN'}
+                  </span>
+                </div>
+              </div>
+              <div className="p-2 sm:p-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
+                  {data.referenceExchangeRates.map((rate, index) => (
+                    <div key={index} className="border border-border p-3">
+                      <div className="flex items-center gap-2 mb-2">
+                        <Banknote className="w-4 h-4 flex-shrink-0" />
+                        <span className="font-bold text-primary text-sm">{rate.currency}</span>
+                      </div>
+                      <div className="text-xs space-y-1">
+                        <div>
+                          <span className="text-muted-foreground">RATE:</span>{' '}
+                          <span className="font-semibold">¥{rate.rate.toLocaleString()}</span>
+                        </div>
+                        <div>
+                          <span className="text-muted-foreground">UNIT:</span>{' '}
+                          <span className="font-medium">{rate.unit}</span>
+                        </div>
+                        <div className="break-words">
+                          <span className="text-muted-foreground">UPDATED:</span>{' '}
+                          <span className="font-medium">{rate.lastUpdated}</span>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {activeTab === 'chat' && !isGuestMode && <Chatbot selectedTimestamp={selectedTimestamp} />}
+
+        {activeTab === 'chat' && isGuestMode && (
+          <div className="space-y-4">
+            <div className="border border-border">
+              <div className="bg-muted p-2 sm:p-3 border-b border-border">
+                <div className="flex items-center gap-2">
+                  <span className="font-bold text-sm">CHAT_DISABLED_IN_DEMO</span>
+                </div>
+              </div>
+              <div className="p-8 text-center">
+                <div className="text-muted-foreground text-sm">
+                  <p className="mb-2">Chat functionality is disabled in demo mode.</p>
+                  <p>Please authenticate with your passcode to access the AI assistant.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  )
+}
+
+```
+</file>
+
+<file path="portfolio/app/layout.tsx">
+```typescriptreact
+import { Analytics } from '@vercel/analytics/next'
+import { GeistMono } from 'geist/font/mono'
+import { GeistSans } from 'geist/font/sans'
+import type { Metadata } from 'next'
+import type React from 'react'
+import './globals.css'
+import { Suspense } from 'react'
+import { AuthGuard } from '@/components/auth-guard'
+import { ThemeProvider } from '@/components/theme-provider'
+
+export const metadata: Metadata = {
+  title: 'Portfolio Terminal',
+  description: 'Professional portfolio management and analytics terminal',
+  generator: 'Portfolio Terminal',
+}
+
+export default function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode
+}>) {
+  return (
+    <html lang="en" suppressHydrationWarning={true}>
+      <body className={`font-sans ${GeistSans.variable} ${GeistMono.variable}`}>
+        <Suspense fallback={<div>Loading...</div>}>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            <AuthGuard>{children}</AuthGuard>
+          </ThemeProvider>
+          <Analytics />
+        </Suspense>
+      </body>
+    </html>
+  )
+}
+
+```
+</file>
+
+<file path="portfolio/app/globals.css">
+```css
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@source "../node_modules/streamdown/dist/index.js";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+}
+
+:root {
+  --radius: 0.625rem;
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.145 0 0);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.145 0 0);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.145 0 0);
+  --primary: oklch(0.205 0 0);
+  --primary-foreground: oklch(0.985 0 0);
+  --secondary: oklch(0.97 0 0);
+  --secondary-foreground: oklch(0.205 0 0);
+  --muted: oklch(0.97 0 0);
+  --muted-foreground: oklch(0.556 0 0);
+  --accent: oklch(0.97 0 0);
+  --accent-foreground: oklch(0.205 0 0);
+  --destructive: oklch(0.577 0.245 27.325);
+  --border: oklch(0.922 0 0);
+  --input: oklch(0.922 0 0);
+  --ring: oklch(0.708 0 0);
+  --chart-1: oklch(0.646 0.222 41.116);
+  --chart-2: oklch(0.6 0.118 184.704);
+  --chart-3: oklch(0.398 0.07 227.392);
+  --chart-4: oklch(0.828 0.189 84.429);
+  --chart-5: oklch(0.769 0.188 70.08);
+  --sidebar: oklch(0.985 0 0);
+  --sidebar-foreground: oklch(0.145 0 0);
+  --sidebar-primary: oklch(0.205 0 0);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.97 0 0);
+  --sidebar-accent-foreground: oklch(0.205 0 0);
+  --sidebar-border: oklch(0.922 0 0);
+  --sidebar-ring: oklch(0.708 0 0);
+}
+
+.dark {
+  --background: oklch(0.145 0 0);
+  --foreground: oklch(0.985 0 0);
+  --card: oklch(0.205 0 0);
+  --card-foreground: oklch(0.985 0 0);
+  --popover: oklch(0.205 0 0);
+  --popover-foreground: oklch(0.985 0 0);
+  --primary: oklch(0.922 0 0);
+  --primary-foreground: oklch(0.205 0 0);
+  --secondary: oklch(0.269 0 0);
+  --secondary-foreground: oklch(0.985 0 0);
+  --muted: oklch(0.269 0 0);
+  --muted-foreground: oklch(0.708 0 0);
+  --accent: oklch(0.269 0 0);
+  --accent-foreground: oklch(0.985 0 0);
+  --destructive: oklch(0.704 0.191 22.216);
+  --border: oklch(1 0 0 / 10%);
+  --input: oklch(1 0 0 / 15%);
+  --ring: oklch(0.556 0 0);
+  --chart-1: oklch(0.488 0.243 264.376);
+  --chart-2: oklch(0.696 0.17 162.48);
+  --chart-3: oklch(0.769 0.188 70.08);
+  --chart-4: oklch(0.627 0.265 303.9);
+  --chart-5: oklch(0.645 0.246 16.439);
+  --sidebar: oklch(0.205 0 0);
+  --sidebar-foreground: oklch(0.985 0 0);
+  --sidebar-primary: oklch(0.488 0.243 264.376);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.269 0 0);
+  --sidebar-accent-foreground: oklch(0.985 0 0);
+  --sidebar-border: oklch(1 0 0 / 10%);
+  --sidebar-ring: oklch(0.556 0 0);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+```
+</file>
+
+<file path="portfolio/components/auth-guard.tsx">
+```typescriptreact
+'use client'
+
+import { Lock } from 'lucide-react'
+import { useEffect, useState } from 'react'
+import { Button } from '@/components/ui/button'
+
+interface AuthGuardProps {
+  children: React.ReactNode
+}
+
+export function AuthGuard({ children }: AuthGuardProps) {
+  const [isAuthenticated, setIsAuthenticated] = useState(false)
+  const [, setIsGuestMode] = useState(false)
+  const [passcode, setPasscode] = useState('')
+  const [error, setError] = useState('')
+  const [isLoading, setIsLoading] = useState(true)
+
+  useEffect(() => {
+    const savedAuth = sessionStorage.getItem('portfolio-auth')
+    const savedGuestMode = sessionStorage.getItem('portfolio-guest-mode')
+    if (savedAuth === 'true') {
+      setIsAuthenticated(true)
+      setIsGuestMode(savedGuestMode === 'true')
+    }
+    setIsLoading(false)
+  }, [setIsGuestMode])
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setError('')
+
+    try {
+      const response = await fetch('/api/auth', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ passcode }),
+      })
+
+      if (response.ok) {
+        sessionStorage.setItem('portfolio-auth', 'true')
+        sessionStorage.setItem('portfolio-guest-mode', 'false')
+        setIsAuthenticated(true)
+        setIsGuestMode(false)
+      } else {
+        setError('Invalid passcode')
+        setPasscode('')
+      }
+    } catch {
+      setError('Authentication failed')
+      setPasscode('')
+    }
+  }
+
+  const handleGuestLogin = () => {
+    sessionStorage.setItem('portfolio-auth', 'true')
+    sessionStorage.setItem('portfolio-guest-mode', 'true')
+    setIsAuthenticated(true)
+    setIsGuestMode(true)
+  }
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen font-mono text-sm flex items-center justify-center bg-background">
+        <div className="text-foreground p-8 border border-border">
+          <div className="flex items-center gap-2">
+            <Lock className="w-4 h-4 animate-pulse" />
+            <span>INITIALIZING_SECURITY...</span>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  if (!isAuthenticated) {
+    return (
+      <div className="min-h-screen font-mono text-sm flex items-center justify-center bg-background">
+        <div className="bg-background text-foreground p-8 border border-border max-w-md w-full mx-4">
+          <div className="mb-6">
+            <div className="flex items-center gap-2 mb-2">
+              <Lock className="w-5 h-5 text-primary" />
+              <span className="text-lg font-bold">SECURE_ACCESS_REQUIRED</span>
+            </div>
+            <div className="text-xs text-muted-foreground">{'>'} PORTFOLIO_TERMINAL_v1.0_AUTH</div>
+          </div>
+
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div>
+              <label htmlFor="passcode" className="block text-xs text-muted-foreground mb-2">
+                ENTER_PASSCODE:
+              </label>
+              <input
+                id="passcode"
+                type="password"
+                value={passcode}
+                onChange={e => setPasscode(e.target.value)}
+                className="w-full p-3 bg-background border border-border text-foreground font-mono text-sm focus:outline-none focus:border-primary"
+                placeholder="****************"
+                autoFocus
+              />
+            </div>
+
+            {error && (
+              <div className="text-red-500 text-xs">
+                {'>'} ERROR: {error.toUpperCase()}
+              </div>
+            )}
+
+            <Button
+              type="submit"
+              className="w-full font-mono rounded-none"
+              disabled={!passcode.trim()}
+            >
+              [AUTHENTICATE]
+            </Button>
+          </form>
+
+          <div className="mt-4 text-center">
+            <div className="text-xs text-muted-foreground mb-3">OR</div>
+            <Button
+              type="button"
+              variant="outline"
+              className="w-full font-mono rounded-none"
+              onClick={handleGuestLogin}
+            >
+              [GUEST_MODE]
+            </Button>
+          </div>
+
+          <div className="mt-6 text-xs text-muted-foreground text-center">
+            <div>ACCESS_LEVEL: RESTRICTED</div>
+            <div>SECURITY_STATUS: ACTIVE</div>
+            <div className="mt-2 text-xs text-yellow-500">GUEST_MODE: DEMO_DATA_ONLY</div>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  return <>{children}</>
+}
+
+```
+</file>
+
+<file path="portfolio/components/chatbot.tsx">
+```typescriptreact
+'use client'
+
+import { useChat } from '@ai-sdk/react'
+import { DefaultChatTransport } from 'ai'
+import { Bot, Loader2, Plus, Send, User } from 'lucide-react'
+import { useEffect, useRef, useState } from 'react'
+import { Streamdown } from 'streamdown'
+import { Button } from '@/components/ui/button'
+
+interface ChatbotProps {
+  selectedTimestamp?: string
+}
+
+export function Chatbot({ selectedTimestamp }: ChatbotProps) {
+  const { messages, status, stop, regenerate, sendMessage, setMessages } = useChat({
+    transport: new DefaultChatTransport({
+      api: '/api/chat',
+      body: {
+        timestamp: selectedTimestamp,
+      },
+    }),
+  })
+
+  const [input, setInput] = useState('')
+  const messagesEndRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
+  }, [messages])
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    if (!input.trim()) return
+    sendMessage({ text: input })
+    setInput('')
+  }
+
+  const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault()
+      const form = e.currentTarget.form
+      if (form) {
+        form.requestSubmit()
+      }
+    }
+  }
+
+  const handleExampleClick = (example: string) => {
+    sendMessage({ text: example })
+  }
+
+  const handleNewChat = () => {
+    setMessages([])
+  }
+
+  return (
+    <div className="h-screen flex flex-col space-y-4">
+      <div className="flex-1 flex flex-col max-w-4xl mx-auto w-full">
+        <div className="bg-muted p-2 sm:p-3 border-b border-border">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 sm:gap-0">
+            <div className="flex items-center gap-2">
+              <Bot className="w-4 h-4 flex-shrink-0" />
+              <span className="font-bold text-sm">AI_PORTFOLIO_ASSISTANT.LOG</span>
+            </div>
+            <button
+              onClick={handleNewChat}
+              className="flex items-center gap-1 text-xs px-2 py-1 border border-border bg-background hover:bg-accent hover:text-accent-foreground transition-colors rounded-md self-end sm:self-auto"
+            >
+              <Plus className="w-3 h-3" />
+              <span className="hidden sm:inline">NEW CHAT</span>
+              <span className="sm:hidden">NEW</span>
+            </button>
+          </div>
+          <div className="text-xs text-muted-foreground mt-1">
+            Ask questions about your portfolio data, performance, and get insights
+          </div>
+        </div>
+
+        {/* Messages Container */}
+        <div className="p-2 sm:p-3 flex-1 overflow-y-auto space-y-3 sm:space-y-4">
+          {messages.length === 0 && (
+            <div className="text-center text-muted-foreground text-sm py-6 sm:py-8">
+              <Bot className="w-6 h-6 sm:w-8 sm:h-8 mx-auto mb-2 opacity-50" />
+              <p className="text-xs sm:text-sm">Start a conversation about your portfolio...</p>
+              <div className="mt-3 sm:mt-4 text-xs text-center space-y-1">
+                <p>Try asking:</p>
+                <div className="space-y-1 sm:space-y-2">
+                  <button
+                    onClick={() => handleExampleClick("What's my total portfolio value?")}
+                    className="font-mono bg-muted px-2 py-1 rounded text-xs hover:bg-accent hover:text-accent-foreground cursor-pointer transition-colors block mx-auto max-w-full break-words"
+                  >
+                    &quot;What&apos;s my total portfolio value?&quot;
+                  </button>
+                  <button
+                    onClick={() => handleExampleClick('Which stocks performed best this month?')}
+                    className="font-mono bg-muted px-2 py-1 rounded text-xs hover:bg-accent hover:text-accent-foreground cursor-pointer transition-colors block mx-auto max-w-full break-words"
+                  >
+                    &quot;Which stocks performed best this month?&quot;
+                  </button>
+                  <button
+                    onClick={() => handleExampleClick("What's my asset allocation?")}
+                    className="font-mono bg-muted px-2 py-1 rounded text-xs hover:bg-accent hover:text-accent-foreground cursor-pointer transition-colors block mx-auto max-w-full break-words"
+                  >
+                    &quot;What&apos;s my asset allocation?&quot;
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {messages.map(message => (
+            <div key={message.id} className="space-y-2">
+              <div className="flex items-center gap-2">
+                {message.role === 'user' ? (
+                  <User className="w-3 h-3 text-primary" />
+                ) : (
+                  <Bot className="w-3 h-3 text-green-500" />
+                )}
+                <span className="text-xs font-bold text-muted-foreground">
+                  {message.role === 'user' ? 'USER' : 'AI_ASSISTANT'}
+                </span>
+              </div>
+
+              <div className="ml-4 sm:ml-5 text-xs sm:text-sm overflow-hidden">
+                {message.role === 'assistant'
+                  ? message.parts.map((part, index) =>
+                      part.type === 'text' ? (
+                        <div key={index} className="streamdown-container break-words">
+                          <Streamdown>{part.text}</Streamdown>
+                        </div>
+                      ) : null
+                    )
+                  : message.parts.map((part, index) =>
+                      part.type === 'text' ? (
+                        <div key={index} className="whitespace-pre-wrap break-words">
+                          {part.text}
+                        </div>
+                      ) : null
+                    )}
+              </div>
+            </div>
+          ))}
+
+          {/* Loading indicator */}
+          {(status === 'streaming' || status === 'submitted') && (
+            <div className="flex items-center gap-2 text-muted-foreground">
+              <Loader2 className="w-3 h-3 animate-spin" />
+              <span className="text-xs">AI_ASSISTANT is thinking...</span>
+            </div>
+          )}
+          <div ref={messagesEndRef} />
+        </div>
+
+        {/* Input Form */}
+        <div className="sticky bottom-0 bg-background p-2 sm:p-3">
+          <form onSubmit={handleSubmit} className="flex gap-2">
+            <input
+              type="text"
+              value={input}
+              onChange={e => setInput(e.target.value)}
+              onKeyDown={handleKeyPress}
+              placeholder="Ask about your portfolio..."
+              disabled={status !== 'ready'}
+              className="flex-1 px-2 sm:px-3 py-2 text-xs sm:text-sm border border-border bg-background font-mono focus:outline-none focus:ring-1 focus:ring-primary disabled:opacity-50 min-w-0"
+            />
+            <Button
+              type="submit"
+              variant="outline"
+              disabled={status !== 'ready' || !input.trim()}
+              className="font-mono flex-shrink-0 h-[38px] rounded-none"
+            >
+              {status !== 'ready' ? (
+                <Loader2 className="w-3 h-3 animate-spin" />
+              ) : (
+                <Send className="w-3 h-3" />
+              )}
+            </Button>
+          </form>
+
+          {/* Status and Controls */}
+          <div className="flex items-center justify-between mt-2 text-xs text-muted-foreground">
+            <div className="flex items-center gap-2">
+              <span>STATUS:</span>
+              <span
+                className={`font-mono ${
+                  status === 'ready'
+                    ? 'text-green-500'
+                    : status === 'streaming' || status === 'submitted'
+                      ? 'text-blue-500'
+                      : status === 'error'
+                        ? 'text-red-500'
+                        : 'text-yellow-500'
+                }`}
+              >
+                {status.toUpperCase()}
+              </span>
+            </div>
+
+            <div className="flex gap-2">
+              {(status === 'streaming' || status === 'submitted') && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={stop}
+                  className="text-xs h-6 px-2 font-mono"
+                >
+                  [STOP]
+                </Button>
+              )}
+              {status === 'ready' && messages.length > 0 && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => regenerate()}
+                  className="text-xs h-6 px-2 font-mono"
+                >
+                  [REGEN]
+                </Button>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+```
+</file>
+
+<file path="portfolio/components/data-loader.tsx">
+```typescriptreact
+'use client'
+
+import { useEffect } from 'react'
+
+interface DataLoaderProps {
+  onTimestampsLoaded: (timestamps: string[]) => void
+}
+
+export function DataLoader({ onTimestampsLoaded }: DataLoaderProps) {
+  useEffect(() => {
+    const fetchTimestamps = async () => {
+      // Skip if in guest mode
+      const guestMode = sessionStorage.getItem('portfolio-guest-mode') === 'true'
+      if (guestMode) {
+        return
+      }
+
+      try {
+        const response = await fetch('/api/timestamps')
+        if (!response.ok) {
+          throw new Error('Failed to fetch timestamps')
+        }
+        const data = (await response.json()) as { timestamps: string[] }
+        onTimestampsLoaded(data.timestamps)
+      } catch (error) {
+        console.error('Failed to load timestamps:', error)
+        onTimestampsLoaded(['20250917_005134.json'])
+      }
+    }
+
+    fetchTimestamps()
+  }, [onTimestampsLoaded])
+
+  return null
+}
+
+export async function loadJSONFile(filename: string) {
+  try {
+    const response = await fetch(`/api/data/${filename}`)
+    if (!response.ok) {
+      throw new Error(`Failed to fetch ${filename}: ${response.statusText}`)
+    }
+    const data = await response.json()
+    return data
+  } catch (error) {
+    console.error(`Failed to load ${filename}:`, error)
+    throw error
+  }
+}
+
+```
+</file>
+
+<file path="portfolio/components/theme-provider.tsx">
+```typescriptreact
+'use client'
+
+import { ThemeProvider as NextThemesProvider, type ThemeProviderProps } from 'next-themes'
+import * as React from 'react'
+
+export function ThemeProvider({ children, ...props }: ThemeProviderProps) {
+  return <NextThemesProvider {...props}>{children}</NextThemesProvider>
+}
+
+```
+</file>
+
+<file path="portfolio/components/ui/button.tsx">
+```typescriptreact
+import { Slot } from '@radix-ui/react-slot'
+import { cva, type VariantProps } from 'class-variance-authority'
+import * as React from 'react'
+
+import { cn } from '@/lib/utils'
+
+const buttonVariants = cva(
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive",
+  {
+    variants: {
+      variant: {
+        default: 'bg-primary text-primary-foreground shadow-xs hover:bg-primary/90',
+        destructive:
+          'bg-destructive text-white shadow-xs hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 dark:bg-destructive/60',
+        outline:
+          'border bg-background shadow-xs hover:bg-accent hover:text-accent-foreground dark:bg-input/30 dark:border-input dark:hover:bg-input/50',
+        secondary: 'bg-secondary text-secondary-foreground shadow-xs hover:bg-secondary/80',
+        ghost: 'hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50',
+        link: 'text-primary underline-offset-4 hover:underline',
+      },
+      size: {
+        default: 'h-9 px-4 py-2 has-[>svg]:px-3',
+        sm: 'h-8 rounded-md gap-1.5 px-3 has-[>svg]:px-2.5',
+        lg: 'h-10 rounded-md px-6 has-[>svg]:px-4',
+        icon: 'size-9',
+      },
+    },
+    defaultVariants: {
+      variant: 'default',
+      size: 'default',
+    },
+  }
+)
+
+function Button({
+  className,
+  variant,
+  size,
+  asChild = false,
+  ...props
+}: React.ComponentProps<'button'> &
+  VariantProps<typeof buttonVariants> & {
+    asChild?: boolean
+  }) {
+  const Comp = asChild ? Slot : 'button'
+
+  return (
+    <Comp
+      data-slot="button"
+      className={cn(buttonVariants({ variant, size, className }))}
+      {...props}
+    />
+  )
+}
+
+export { Button, buttonVariants }
+
+```
+</file>
+
+<userInstructions>
+Use this as inspirationa and descign ui accordign to my requirements.
+
+requirements:
+</userInstructions>
+
+</context>
